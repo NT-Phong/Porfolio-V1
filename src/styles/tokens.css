@@ -1,36 +1,38 @@
 :root {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Syne", sans-serif;
+  --font-display: "Cabinet Grotesk", "Syne", sans-serif;
   --font-serif: "Cormorant Garamond", serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --bg-base: #0a0d16;          /* Obsidian Steel (Trầm ấm) */
-  --bg-deep: #05070c;          /* Onyx Void (Dịu nhẹ) */
-  --bg-surface: #101422;       /* Soft Surface */
-  --bg-surface-hover: #161c2e;
+  --bg-base: #05080b;          /* Deep Ink-Black (moncy.dev style) */
+  --bg-deep: #020406;          /* Onyx Void */
+  --bg-surface: #0c131a;       /* Soft Slate-Blue Card Base */
+  --bg-surface-hover: #121b24;
 
-  --text-primary: #f1f5f9;     /* Trắng ngà dịu */
-  --text-secondary: #64748b;   /* Xám thép mát */
-  --text-muted: rgba(100, 116, 139, 0.6);
+  --text-primary: #f1f5f9;     /* Soft Off-White */
+  --text-secondary: #94a3b8;   /* Muted Steel Gray (higher premium contrast) */
+  --text-muted: rgba(148, 163, 184, 0.55);
 
-  --accent-orange: #f25c05;    /* Burnt Tangerine (Sang trọng) */
+  --accent-orange: #ff5a00;    /* Electric Amber Orange */
   --accent-orange-hover: #ff7324;
-  --accent-cyan: #0df5d5;      /* Cyber Mint (Êm dịu) */
-  --accent-mint: #0df5d5;
-  --accent-indigo: #3b82f6;    /* Muted Royal Blue */
-  --accent-violet: #6366f1;    /* Muted Indigo-Violet */
+  --accent-cyan: #14c7c0;      /* Muted Technical Cyan */
+  --accent-mint: #14c7c0;
+  --accent-indigo: #2563eb;    /* Premium Royal Blue */
+  --accent-violet: #4f46e5;    /* Premium Indigo-Violet */
 
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-subtle: rgba(255, 255, 255, 0.05);
   --border-strong: rgba(255, 255, 255, 0.09);
-  --border-cyan: rgba(13, 245, 213, 0.15);
-  --border-orange: rgba(242, 92, 5, 0.15);
+  --border-cyan: rgba(20, 199, 192, 0.12);
+  --border-orange: rgba(255, 90, 0, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.08);
 
-  --surface-glass: rgba(10, 13, 22, 0.6);
-  --surface-card: rgba(16, 20, 34, 0.7);
+  --surface-glass: rgba(12, 19, 26, 0.65);
+  --surface-card: rgba(12, 19, 26, 0.75);
 
-  --shadow-card: 0 32px 80px rgba(0, 0, 0, 0.4);
-  --shadow-orange: 0 18px 60px rgba(242, 92, 5, 0.1);
-  --shadow-cyan: 0 18px 60px rgba(13, 245, 213, 0.08);
+  --shadow-card: 0 32px 80px rgba(0, 0, 0, 0.5);
+  --shadow-glass: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  --shadow-orange: 0 18px 60px rgba(255, 90, 0, 0.08);
+  --shadow-cyan: 0 18px 60px rgba(20, 199, 192, 0.06);
 
   --radius-sm: 10px;
   --radius-md: 18px;
@@ -39,7 +41,7 @@
 
   --container: 1180px;
   --container-wide: 1360px;
-  --section-y: clamp(80px, 12vw, 160px);
+  --section-y: clamp(100px, 14vw, 180px); /* Generous padding for Art Gallery Mode */
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);

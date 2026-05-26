@@ -30,13 +30,18 @@ export default function HeaderMenu({ isHamburgActive, onHamburgClick }: Props) {
             <motion.a 
               href="/" 
               onClick={handleHomeClick} 
-              className="font-display flex items-center text-lg font-black italic leading-none tracking-tighter cursor-pointer"
+              className="font-display flex items-center text-lg font-black leading-none tracking-tighter cursor-pointer"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               transition={springConfig}
             >
-              <span className="text-white">PHONG</span>
-              <span className="portfolio-accent" style={{ color: 'var(--accent-orange)' }}>DEV</span>
+              <svg className="h-6 w-6 mr-2.5" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 8px var(--accent-orange))', width: '24px', height: '24px' }}>
+                <path d="M30 20 H65 C80 20, 80 50, 65 50 H30" stroke="var(--accent-orange)" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M30 20 V80" stroke="var(--accent-orange)" strokeWidth="12" strokeLinecap="round" />
+                <circle cx="65" cy="50" r="10" fill="var(--accent-cyan)" />
+              </svg>
+              <span className="text-white font-extrabold tracking-tighter uppercase mr-1">PHONG</span>
+              <span className="portfolio-accent font-extrabold tracking-tighter uppercase" style={{ color: 'var(--accent-orange)' }}>DEV</span>
             </motion.a>
           </div>
           

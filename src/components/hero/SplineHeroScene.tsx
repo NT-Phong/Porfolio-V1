@@ -11,6 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function SplineHeroScene() {
   const spline = useRef<Application | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollState = useRef<'hero' | 'about' | 'past'>('hero');
 
   // Tránh lặp lại onLoad khi StrictMode render 2 lần
   const [isLoaded, setIsLoaded] = useState(false);
@@ -32,23 +33,30 @@ export default function SplineHeroScene() {
   const setupAnimations = contextSafe(() => {
     if (!containerRef.current) return;
 
-    // Phóng to toàn bộ mô hình lên 20% (từ scale: 1.35 lên scale: 1.62) và dịch chuyển Y xuống
-    gsap.set(containerRef.current, { scale: 1.62, y: '8vh', force3D: true });
+    // Thiết lập hiển thị ban đầu ổn định cho container 3D
+    gsap.set(containerRef.current, {
+      x: 0,
+      scale: 1.62,
+      y: '8vh',
+      opacity: 1,
+      visibility: "visible",
+      force3D: true
+    });
 
     // Thay thế "vw" String bằng Pixel số thực tuyệt đối
     const xOffset = window.innerWidth > 768 ? window.innerWidth * 0.28 : window.innerWidth * 0.4;
 
+    // 1. Bản đồ di chuyển gốc của Spline đi qua toàn bộ các section của trang
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".main-scroll-container",
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.5, // Giảm từ 1 xuống 0.5 để phản ứng nhanh, bớt tồn đọng (lag)
+        scrub: 0.5,
         invalidateOnRefresh: true,
       }
     });
 
-    // Giữ nguyên tỷ lệ 20% (scale: 1.62) và chiều cao (y: 8vh), chỉ trượt sang lề phải/trái
     tl.to(containerRef.current, {
       x: xOffset * 1.25, // About (phải)
       y: '8vh', 
@@ -57,26 +65,54 @@ export default function SplineHeroScene() {
       ease: "none"
     })
     .to(containerRef.current, {
-      x: -xOffset * 1.25, // Projects (trái)
+      x: xOffset * 1.25, // Giữ nguyên ở vị trí bên phải tối đa ở Projects
       y: '8vh',
       scale: 1.62,
       force3D: true,
       ease: "none"
     })
     .to(containerRef.current, {
-      x: xOffset * 1.25, // Career (phải)
+      x: xOffset * 1.25, // Giữ nguyên ở vị trí bên phải tối đa ở Career
       y: '8vh',
       scale: 1.62,
       force3D: true,
       ease: "none"
     })
     .to(containerRef.current, {
-      x: xOffset * 0.8, // Contact (phải-center)
+      x: xOffset * 1.25, // Giữ nguyên ở vị trí bên phải tối đa ở Contact
       y: '8vh',
       scale: 1.62,
       force3D: true,
       ease: "none"
     });
+
+    // 2. Cập nhật trạng thái cuộn khi người dùng đi vào/ra phần Technical Profile (About)
+    ScrollTrigger.create({
+      trigger: "#about",
+      start: "top top",
+      onEnter: () => {
+        scrollState.current = 'about';
+        gsap.fromTo('.spline-dialogue-bubble',
+          { opacity: 0, scaleX: 0.88, scaleY: 0.88 },
+          { opacity: 1, scaleX: 1, scaleY: 1, duration: 0.45, ease: "back.out(1.7)", overwrite: "auto" }
+        );
+      },
+      onLeaveBack: () => {
+        scrollState.current = 'hero';
+        gsap.to('.spline-dialogue-bubble', {
+          opacity: 0,
+          scaleX: 0.88,
+          scaleY: 0.88,
+          duration: 0.3,
+          ease: "power2.out",
+          overwrite: "auto"
+        });
+      }
+    });
+    // Buộc ScrollTrigger tính toán lại toàn bộ vị trí các trigger trên trang sau khi layout đã ổn định hoàn toàn
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
   });
 
   // Áp dụng góc xoay trực tiếp khi kéo thanh trượt ở chế độ calibration
@@ -91,37 +127,151 @@ export default function SplineHeroScene() {
   useEffect(() => {
     if (!isLoaded) return;
 
+    // Khởi tạo trạng thái ban đầu ổn định
+    if (containerRef.current) {
+      containerRef.current.style.display = "block";
+      containerRef.current.style.opacity = "1";
+    }
+
+    // Refresh ScrollTrigger sau khi React DOM render đã hoàn tất để tính toán vị trí pin spacer chính xác nhất
+    ScrollTrigger.refresh();
+
     const handleWindowHover = contextSafe((e: MouseEvent) => {
       if (!spline.current || calibrationMode) return;
       
       const monitor = spline.current.findObjectByName('Monitor');
       if (!monitor) return;
 
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = -(e.clientY / window.innerHeight) * 2 + 1;
+      const state = scrollState.current;
 
-      // Góc quay Y tích lũy trong không gian thế giới (World Y Rotation)
-      // Bao gồm: Scene 1 (-0.340) + Body (0.530) + Monitor Local Y (0.630) = 0.820 rad
-      const theta = 0.820;
-      const cosT = Math.cos(theta);
-      const sinT = Math.sin(theta);
+      if (state === 'hero') {
+        // Khi ở Hero: Di chuyển và xoay theo chuột toàn màn hình bình thường
+        const x = (e.clientX / window.innerWidth) * 2 - 1;
+        const y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      // Pitch (ngửa lên/xuống) và Yaw (xoay trái/phải)
-      const pitch = -y * 0.4;
-      const yaw = x * 0.4;
+        const theta = 0.820;
+        const cosT = Math.cos(theta);
+        const sinT = Math.sin(theta);
 
-      // Chiếu vector Pitch lên trục X và Z của Monitor để tránh hiện tượng xoay xéo lệch trục
-      gsap.to(monitor.rotation, {
-        x: pitch * cosT,
-        y: 0.630 + yaw,
-        z: -pitch * sinT,
-        duration: 0.15,
-        ease: 'power1.out',
-        overwrite: 'auto' // Ghi đè hoạt ảnh cũ ngay lập tức, tiết kiệm tài nguyên CPU
-      });
+        const pitch = -y * 0.4;
+        const yaw = x * 0.4;
+
+        gsap.to(monitor.rotation, {
+          x: pitch * cosT,
+          y: 0.630 + yaw,
+          z: -pitch * sinT,
+          duration: 0.15,
+          ease: 'power1.out',
+          overwrite: 'auto'
+        });
+      } else if (state === 'about') {
+        // Khi ở Technical Profile (About): Giới hạn chỉ hover theo trỏ chuột bên trái
+        const isLeft = e.clientX < window.innerWidth * 0.55;
+
+        if (isLeft) {
+          const x = (e.clientX / window.innerWidth) * 2 - 1;
+          const y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+          const theta = 0.820;
+          const cosT = Math.cos(theta);
+          const sinT = Math.sin(theta);
+
+          const pitch = -y * 0.4;
+          const yaw = x * 0.4;
+
+          gsap.to(monitor.rotation, {
+            x: pitch * cosT,
+            y: 0.630 + yaw,
+            z: -pitch * sinT,
+            duration: 0.15,
+            ease: 'power1.out',
+            overwrite: 'auto'
+          });
+        } else {
+          // Khi trỏ chuột sang phải, monitor quay về hướng trái nhìn vào text và đứng yên
+          const theta = 0.820;
+          const cosT = Math.cos(theta);
+          const sinT = Math.sin(theta);
+          
+          const yaw = -0.25; // Quay sang trái -0.25 rad
+          const pitch = 0;   // Góc nhìn ngang
+
+          gsap.to(monitor.rotation, {
+            x: pitch * cosT,
+            y: 0.630 + yaw, // Khóa góc nhìn về bên trái
+            z: -pitch * sinT,
+            duration: 0.3,   // Mượt mà trượt về vị trí khóa
+            ease: 'power1.out',
+            overwrite: 'auto'
+          });
+        }
+      }
+    });
+
+    const handleScroll = contextSafe(() => {
+      const projectsEl = document.getElementById('projects');
+      if (!projectsEl || !containerRef.current) return;
+
+      const rect = projectsEl.getBoundingClientRect();
+      const threshold = window.innerHeight - (rect.height * 0.3);
+
+      const shouldHide = rect.top <= threshold;
+
+      if (shouldHide && scrollState.current !== 'past') {
+        scrollState.current = 'past';
+        gsap.to('.spline-dialogue-bubble', {
+          opacity: 0,
+          scaleX: 0.88,
+          scaleY: 0.88,
+          duration: 0.3,
+          overwrite: "auto"
+        });
+        gsap.to(containerRef.current, {
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.out",
+          onComplete: () => {
+            if (scrollState.current === 'past' && containerRef.current) {
+              containerRef.current.style.display = "none";
+            }
+          }
+        });
+      } else if (!shouldHide && scrollState.current === 'past') {
+        const aboutEl = document.getElementById('about');
+        const aboutRect = aboutEl ? aboutEl.getBoundingClientRect() : null;
+        
+        const newState = (aboutRect && aboutRect.top <= 0) ? 'about' : 'hero';
+        scrollState.current = newState;
+        
+        containerRef.current.style.display = "block";
+        gsap.to(containerRef.current, {
+          opacity: 1,
+          duration: 0.4,
+          ease: "power2.out"
+        });
+
+        if (newState === 'about') {
+          gsap.fromTo('.spline-dialogue-bubble',
+            { opacity: 0, scaleX: 0.88, scaleY: 0.88 },
+            { opacity: 1, scaleX: 1, scaleY: 1, duration: 0.45, ease: "back.out(1.7)", overwrite: "auto" }
+          );
+        } else {
+          gsap.to('.spline-dialogue-bubble', {
+            opacity: 0,
+            scaleX: 0.88,
+            scaleY: 0.88,
+            duration: 0.3,
+            overwrite: "auto"
+          });
+        }
+      }
     });
 
     window.addEventListener('mousemove', handleWindowHover);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Gọi lập tức để cập nhật trạng thái chuẩn xác khi reload trang
+    handleScroll();
 
     // Chặn sự kiện wheel và touch để Spline không "nuốt" scroll của trang
     const blockScrollPropagation = (e: Event) => {
@@ -137,6 +287,7 @@ export default function SplineHeroScene() {
 
     return () => {
       window.removeEventListener('mousemove', handleWindowHover);
+      window.removeEventListener('scroll', handleScroll);
       if (container) {
         container.removeEventListener('wheel', blockScrollPropagation, { capture: true });
         container.removeEventListener('touchstart', blockScrollPropagation, { capture: true });
@@ -234,7 +385,112 @@ export default function SplineHeroScene() {
           scene="https://prod.spline.design/4QDf3qwGtpRrRVFU/scene.splinecode"
           onLoad={onLoad}
         />
+
+        {/* Bong bóng thoại (Dialogue/Thought Bubble) giới thiệu kỹ năng thân thiện */}
+        <div 
+          className="spline-dialogue-bubble pointer-events-none opacity-0"
+          style={{
+            position: 'absolute',
+            bottom: '72%',         /* neo phía trên màn hình, sát nóc monitor */
+            left: '50%',
+            transform: 'translateX(-50%) scale(0.9)',
+            transformOrigin: 'bottom center',
+            zIndex: 20,
+            width: 'max-content',
+            maxWidth: '220px',
+          }}
+        >
+          <div className="spline-dialogue-bubble-float">
+            {/* Card kính mờ cao cấp */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(7,26,31,0.96) 0%, rgba(16,42,48,0.94) 100%)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(18,214,221,0.5)',
+              borderRadius: '16px',
+              boxShadow: '0 0 30px rgba(18,214,221,0.2), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
+              padding: '12px 16px 14px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              position: 'relative',
+            }}>
+              {/* Mũi tên trỏ xuống */}
+              <div style={{
+                position: 'absolute',
+                bottom: '-7px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '14px',
+                height: '14px',
+                background: 'linear-gradient(135deg, rgba(16,42,48,0.94), rgba(16,42,48,0.94))',
+                border: '1px solid rgba(18,214,221,0.5)',
+                borderTop: 'none',
+                borderLeft: 'none',
+                rotate: '45deg',
+              }} />
+
+              {/* Label */}
+              <span style={{
+                fontSize: '9px',
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: '#FF7A1A',
+                lineHeight: 1,
+              }}>MY SKILLS</span>
+
+              {/* Nội dung chính */}
+              <p style={{
+                fontSize: '11px',
+                color: '#F8FAFC',
+                lineHeight: '1.5',
+                fontWeight: 500,
+                textAlign: 'center',
+                margin: 0,
+              }}>
+                Đây là những kỹ năng<br/>của tôi đó! 😎⚡
+              </p>
+
+              {/* Mini tech tags */}
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '2px' }}>
+                {['C#', 'React', 'Node'].map(tag => (
+                  <span key={tag} style={{
+                    fontSize: '8px',
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    background: 'rgba(18,214,221,0.12)',
+                    border: '1px solid rgba(18,214,221,0.3)',
+                    color: '#12D6DD',
+                    letterSpacing: '0.05em',
+                  }}>{tag}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* CSS Floating keyframes cho bong bóng thoại để tạo cảm giác sinh động */}
+      <style>{`
+        @keyframes spline-bubble-float {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-8px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+        .spline-dialogue-bubble-float {
+          animation: spline-bubble-float 4s ease-in-out infinite;
+        }
+      `}</style>
 
       {/* Bảng cân chỉnh góc xoay mô hình 3D sử dụng Portal để đưa ra ngoài stacking context */}
       {isLoaded && typeof document !== 'undefined' && createPortal(
