@@ -1,9 +1,10 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import SplineHeroScene from './hero/SplineHeroScene';
 import { useMagneticElements } from '../hooks/useMagneticElements';
+import { useLoading } from '../hooks/useLoading';
 
 // Import Modular Sections
 import HeroIntroSection from './sections/HeroIntroSection';
@@ -16,24 +17,131 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { revealApp } = useLoading();
 
   // Kích hoạt tương tác vi mô hút nam châm
   useMagneticElements();
 
-  useGSAP(
-    () => {
-      // 1. Entrance timeline
-      const entryTl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 1.4 } });
+  useEffect(() => {
+    console.log("Hero: useEffect runs, revealApp =", revealApp);
+    if (!revealApp) return;
+    console.log("Hero: Entrance animation starts!");
 
-      entryTl.from('.gsap-fade-down', { y: -30, opacity: 0, stagger: 0.1 })
-        .from('.gsap-social-icons > *', { y: 20, opacity: 0, stagger: 0.1 }, '-=0.8')
-        .from('.gsap-left-col', { x: -50, opacity: 0 }, '-=0.8')
-        .from('.gsap-right-col', { x: 50, opacity: 0 }, '-=0.8')
-        .from('.gsap-scale', { scale: 0.8, opacity: 0, duration: 1.5 }, '-=1.2')
-        .from('.gsap-side', { x: 30, opacity: 0 }, '-=1');
+    const ctx = gsap.context(() => {
+      // 1. Initial settings to prevent instant flashes on load
+      const headerEl = document.querySelector('.creative-header-wrap');
+      
+      gsap.set('.canvas-3d-container', { scale: 1.5, filter: 'blur(20px)', opacity: 0 });
+      if (headerEl) {
+        gsap.set(headerEl, { y: -50, scale: 1.08, opacity: 0 });
+      }
+      gsap.set('.gsap-left-col > *', { y: 35, opacity: 0 });
+      gsap.set('.gsap-right-col > *', { y: 35, opacity: 0 });
+      gsap.set('.gsap-social-icons > *', { y: 25, opacity: 0 });
+      gsap.set('.gsap-side', { x: 30, opacity: 0 });
+
+      // 2. Coordinated luxurious entrance timeline
+      const entryTl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+      entryTl
+        // Step A: Focus 3D Spline Model and slide down creative floating header
+        .to('.canvas-3d-container', {
+          scale: 1,
+          filter: 'blur(0px)',
+          opacity: 1,
+          duration: 2.2,
+          ease: 'power3.out'
+        }, 0)
+        .to(headerEl || [], {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 1.6,
+          ease: 'back.out(1.2)'
+        }, 0.2)
+        // Step B: Stagger left column elements (Hello kicker, solid name, copy)
+        .to('.gsap-left-col > *', {
+          y: 0,
+          opacity: 1,
+          stagger: 0.12,
+          duration: 1.2,
+          ease: 'power4.out'
+        }, 0.4)
+        // Step C: Stagger right column elements (Creative kicker, fullstack developer, GPA, CTA)
+        .to('.gsap-right-col > *', {
+          y: 0,
+          opacity: 1,
+          stagger: 0.12,
+          duration: 1.2,
+          ease: 'power4.out'
+        }, 0.6)
+        // Step D: Social media icons slide up
+        .to('.gsap-social-icons > *', {
+          y: 0,
+          opacity: 1,
+          stagger: 0.08,
+          duration: 1.0,
+          ease: 'power3.out'
+        }, 0.8)
+        // Step E: Side vertical calendar/role label slides in
+        .to('.gsap-side', {
+          x: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: 'power3.out'
+        }, 1.0);
 
       // 2. Responsive detection
       const isDesktop = window.innerWidth > 768;
+
+      // 2.5. Top Scroll Progress Bar Animation (Triggered stably on documentElement to prevent layout thrashing with pins)
+      gsap.to('.scroll-progress-bar', {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.1,
+        }
+      });
+
+      // 2.6. Active Navigation Link Tracker (HOME highlight)
+      // Highly optimized: uses absolute scroll coordinates to completely avoid DOM recalculations
+      ScrollTrigger.create({
+        start: 0,
+        end: 300,
+        onToggle: (self) => {
+          if (self.isActive) {
+            document.querySelectorAll('.creative-menu a').forEach(a => a.classList.remove('active'));
+            document.querySelectorAll('.creative-menu a[href="/"]').forEach(a => a.classList.add('active'));
+          }
+        }
+      });
+
+      const subSections = [
+        { id: 'about', selector: '.creative-menu a[href="#about"]' },
+        { id: 'projects', selector: '.creative-menu a[href="#projects"]' },
+        { id: 'career', selector: '.creative-menu a[href="#projects"]' }, // Keep PROJECTS active during career experience
+        { id: 'contact', selector: '.creative-menu a[href="#contact"]' }
+      ];
+
+      subSections.forEach((sec) => {
+        const el = document.getElementById(sec.id);
+        if (!el) return;
+
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 40%',
+          end: 'bottom 40%',
+          onToggle: (self) => {
+            if (self.isActive) {
+              document.querySelectorAll('.creative-menu a').forEach(a => a.classList.remove('active'));
+              document.querySelectorAll(sec.selector).forEach(a => a.classList.add('active'));
+            }
+          }
+        });
+      });
 
       // 3. Section 2 (About / My Stack) Pinning & Staged Reveal
       if (isDesktop) {
@@ -48,22 +156,28 @@ export default function Hero() {
           }
         });
 
-        aboutTl.from('#about [data-reveal-title]', { yPercent: 105, rotate: 3, opacity: 0, stagger: 0.1, ease: 'power4.out' })
+        aboutTl.fromTo('#about [data-reveal-title]', 
+          { yPercent: 105, rotate: 3, opacity: 0 },
+          { yPercent: 0, rotate: 0, opacity: 1, stagger: 0.1, ease: 'power4.out' }
+        )
           .from('#about .hero-metric-line-left', { x: -50, opacity: 0, stagger: 0.15, ease: 'power3.out' }, '-=0.4')
           .from('#about [data-reveal-desc]', { y: 30, opacity: 0, ease: 'power3.out' }, '-=0.5')
           .from('#about [data-reveal-tool]', { scale: 0.8, opacity: 0, stagger: 0.08, ease: 'power3.out' }, '-=0.3');
       } else {
-        gsap.from('#about [data-reveal-title]', {
-          yPercent: 100,
-          rotate: 3,
-          opacity: 0,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#about',
-            start: 'top 85%',
+        gsap.fromTo('#about [data-reveal-title]',
+          { yPercent: 100, rotate: 3, opacity: 0 },
+          {
+            yPercent: 0,
+            rotate: 0,
+            opacity: 1,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '#about',
+              start: 'top 85%',
+            }
           }
-        });
+        );
         gsap.from('#about .hero-metric-line-left', {
           x: -30,
           opacity: 0,
@@ -77,16 +191,19 @@ export default function Hero() {
       }
 
       // 4. Section 3 (Projects) Grid Reveal
-      gsap.from('#projects [data-reveal-title]', {
-        yPercent: 105,
-        rotate: -3,
-        opacity: 0,
-        ease: 'power4.out',
-        scrollTrigger: {
-          trigger: '#projects',
-          start: 'top 85%',
+      gsap.fromTo('#projects [data-reveal-title]',
+        { yPercent: 105, rotate: -3, opacity: 0 },
+        {
+          yPercent: 0,
+          rotate: 0,
+          opacity: 1,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: '#projects',
+            start: 'top 85%',
+          }
         }
-      });
+      );
 
       gsap.from('#projects [data-project-card]', {
         y: 90,
@@ -101,6 +218,22 @@ export default function Hero() {
           start: 'top 75%',
         }
       });
+
+      // 4.3. Section Career Title Reveal
+      gsap.fromTo('#career [data-reveal-title]',
+        { yPercent: 105, rotate: 3, opacity: 0 },
+        {
+          yPercent: 0,
+          rotate: 0,
+          opacity: 1,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '#career',
+            start: 'top 85%',
+          }
+        }
+      );
 
       // 4.5. Section Career Timeline & Scroll Animations
       gsap.fromTo(
@@ -200,7 +333,10 @@ export default function Hero() {
           }
         });
 
-        contactTl.from('#contact [data-reveal-title]', { yPercent: 105, rotate: 3, opacity: 0, stagger: 0.1, ease: 'power4.out' })
+        contactTl.fromTo('#contact [data-reveal-title]',
+          { yPercent: 105, rotate: 3, opacity: 0 },
+          { yPercent: 0, rotate: 0, opacity: 1, stagger: 0.1, ease: 'power4.out' }
+        )
           .from('#contact .hero-hud-ring-1, #contact .hero-hud-ring-2, #contact .hero-hud-ring-3', { scale: 0.8, opacity: 0, ease: 'power3.out' }, 0)
           .to('#contact .hero-hud-ring-1', { rotation: 120 }, 0)
           .to('#contact .hero-hud-ring-2', { rotation: -90 }, 0)
@@ -208,17 +344,20 @@ export default function Hero() {
           .from('#contact [data-reveal-certifications]', { x: -60, opacity: 0, ease: 'power3.out' }, '-=0.4')
           .from('#contact [data-reveal-contact]', { x: 60, opacity: 0, ease: 'power3.out' }, '-=0.4');
       } else {
-        gsap.from('#contact [data-reveal-title]', {
-          yPercent: 100,
-          rotate: 3,
-          opacity: 0,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#contact',
-            start: 'top 85%',
+        gsap.fromTo('#contact [data-reveal-title]',
+          { yPercent: 100, rotate: 3, opacity: 0 },
+          {
+            yPercent: 0,
+            rotate: 0,
+            opacity: 1,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '#contact',
+              start: 'top 85%',
+            }
           }
-        });
+        );
         gsap.from('#contact [data-reveal-certifications]', {
           x: -40,
           opacity: 0,
@@ -238,15 +377,19 @@ export default function Hero() {
           }
         });
       }
-    },
-    { scope: containerRef },
-  );
+    }, containerRef.current || undefined);
+
+    return () => ctx.revert();
+  }, [revealApp]);
 
   return (
     <div ref={containerRef} className="hero-shell main-scroll-container relative w-full bg-bg-deep">
+      {/* ── Fixed Scroll Progress Bar ── */}
+      <div className="scroll-progress-bar" />
+
       {/* ── Sticky 3D Canvas ── */}
-      <div className="fixed inset-0 z-[10] h-screen w-screen pointer-events-none 3d-canvas-container">
-        <div className="h-full w-full 3d-canvas-inner">
+      <div className="fixed inset-0 z-[10] h-screen w-screen pointer-events-none canvas-3d-container">
+        <div className="h-full w-full canvas-3d-inner">
           <SplineHeroScene />
         </div>
       </div>

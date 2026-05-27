@@ -59,7 +59,9 @@ export default function ScrambleText({ text, speed = 40, delay = 0 }: ScrambleTe
   }, [text, delay]);
 
   const handleMouseEnter = () => {
-    startScramble();
+    if (window.matchMedia('(hover: hover)').matches) {
+      startScramble();
+    }
   };
 
   return (

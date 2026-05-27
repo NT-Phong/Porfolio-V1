@@ -39,10 +39,14 @@
   --radius-lg: 28px;
   --radius-pill: 999px;
 
+  --color-paper: #F8FAFC;
+  --color-accent: #FF7A1A;
+  --color-accent-soft: #12D6DD;
+
   --container: 1180px;
   --container-wide: 1360px;
   --section-y: clamp(100px, 14vw, 180px); /* Generous padding for Art Gallery Mode */
-
+  
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }

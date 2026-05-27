@@ -10,7 +10,7 @@ interface Props {
 const sectionLinks = [
   { label: "About & Stack", anchor: "about" },
   { label: "Projects", anchor: "projects" },
-  { label: "Experience", anchor: "contact" },
+  { label: "Experience", anchor: "career" },
   { label: "Contact", anchor: "contact" },
 ];
 

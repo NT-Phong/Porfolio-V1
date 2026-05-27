@@ -11,16 +11,23 @@ export default function ProjectsSection() {
 
         {/* Right Column Content (Takes 55% width) */}
         <div className="w-full md:w-[55%] flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent-cyan)] animate-pulse" />
-              <span className="font-serif italic text-lg text-[color:var(--accent-cyan)] tracking-wide">
-                Selected Work
+              <span className="status-dot-cyan animate-pulse" />
+              <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-[color:var(--accent-cyan)]">
+                // 02 / SELECTED WORK
               </span>
             </div>
-            <h2 className="font-display text-7xl font-black leading-[0.9] text-[color:var(--text-primary)] md:text-8xl tracking-tight">
-              <span className="motion-mask">
-                <span className="motion-line" data-reveal-title>PROJECTS</span>
+            <h2 className="font-display text-[12vw] md:text-[8.5vw] lg:text-[8.5rem] xl:text-[9.5rem] font-black leading-[0.85] text-[color:var(--text-primary)] tracking-tighter flex flex-col mt-2">
+              <span className="motion-mask overflow-hidden">
+                <span className="motion-line inline-block text-transparent [-webkit-text-stroke:1.5px_rgba(248,250,252,0.2)]" data-reveal-title>
+                  SELECTED
+                </span>
+              </span>
+              <span className="motion-mask overflow-hidden">
+                <span className="motion-line inline-block text-[color:var(--text-primary)] drop-shadow-[0_0_30px_rgba(255,255,255,0.06)]" data-reveal-title>
+                  PROJECTS
+                </span>
               </span>
             </h2>
           </div>

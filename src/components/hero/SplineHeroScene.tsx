@@ -8,10 +8,29 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SHOW_CALIBRATION_PANEL = false; // Đặt thành true nếu cần mở lại bảng cân chỉnh 3D
+
 export default function SplineHeroScene() {
   const spline = useRef<Application | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollState = useRef<'hero' | 'about' | 'past'>('hero');
+  
+  const baseRot = useRef({
+    monitorX: 0,
+    monitorY: 0.630,
+    monitorZ: 0,
+    sceneX: 0,
+    sceneY: -0.340,
+    sceneZ: 0,
+    bodyX: 0,
+    bodyY: 0.630,
+    bodyZ: 0,
+    podiumX: -1.570,
+    podiumY: 0,
+    podiumZ: -1.015
+  });
+
+  const lastHoverOffset = useRef({ x: 0, y: 0, z: 0 });
 
   // Tránh lặp lại onLoad khi StrictMode render 2 lần
   const [isLoaded, setIsLoaded] = useState(false);
@@ -46,49 +65,130 @@ export default function SplineHeroScene() {
     // Thay thế "vw" String bằng Pixel số thực tuyệt đối
     const xOffset = window.innerWidth > 768 ? window.innerWidth * 0.28 : window.innerWidth * 0.4;
 
+    const monitorObj = spline.current?.findObjectByName('Monitor');
+    const scene1Obj = spline.current?.findObjectByName('Scene 1');
+    const bodyObj = spline.current?.findObjectByName('Body');
+    const podiumObj = spline.current?.findObjectByName('Podium');
+
     // 1. Bản đồ di chuyển gốc của Spline đi qua toàn bộ các section của trang
+    const mainScrollContainer = document.querySelector(".main-scroll-container");
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: ".main-scroll-container",
+        trigger: mainScrollContainer || undefined,
         start: "top top",
         end: "bottom bottom",
         scrub: 0.5,
         invalidateOnRefresh: true,
+      },
+      onUpdate: () => {
+        if (scene1Obj) {
+          gsap.set(scene1Obj.rotation, {
+            x: baseRot.current.sceneX,
+            y: baseRot.current.sceneY,
+            z: baseRot.current.sceneZ,
+          });
+        }
+        if (monitorObj) {
+          gsap.set(monitorObj.rotation, {
+            x: baseRot.current.monitorX + lastHoverOffset.current.x,
+            y: baseRot.current.monitorY + lastHoverOffset.current.y,
+            z: baseRot.current.monitorZ + lastHoverOffset.current.z,
+          });
+        }
+        if (bodyObj) {
+          gsap.set(bodyObj.rotation, {
+            x: baseRot.current.bodyX,
+            y: baseRot.current.bodyY,
+            z: baseRot.current.bodyZ,
+          });
+        }
+        if (podiumObj) {
+          gsap.set(podiumObj.rotation, {
+            x: baseRot.current.podiumX,
+            y: baseRot.current.podiumY,
+            z: baseRot.current.podiumZ,
+          });
+        }
       }
     });
 
-    tl.to(containerRef.current, {
-      x: xOffset * 1.25, // About (phải)
-      y: '8vh', 
-      scale: 1.62,
-      force3D: true, // Kích hoạt Hardware Acceleration
-      ease: "none"
-    })
-    .to(containerRef.current, {
-      x: xOffset * 1.25, // Giữ nguyên ở vị trí bên phải tối đa ở Projects
-      y: '8vh',
-      scale: 1.62,
-      force3D: true,
-      ease: "none"
-    })
-    .to(containerRef.current, {
-      x: xOffset * 1.25, // Giữ nguyên ở vị trí bên phải tối đa ở Career
-      y: '8vh',
-      scale: 1.62,
-      force3D: true,
-      ease: "none"
-    })
-    .to(containerRef.current, {
-      x: xOffset * 1.25, // Giữ nguyên ở vị trí bên phải tối đa ở Contact
-      y: '8vh',
-      scale: 1.62,
-      force3D: true,
-      ease: "none"
-    });
+    if (monitorObj && scene1Obj) {
+      // Giai đoạn chuyển tiếp từ Hero sang About (từ progress 0 đến 0.5 của timeline, khớp với chiều cao Hero)
+      tl.fromTo(baseRot.current, 
+        {
+          monitorX: 0,
+          monitorY: 0.630,
+          monitorZ: 0,
+          sceneX: 0,
+          sceneY: -0.340,
+          sceneZ: 0,
+          bodyX: 0,
+          bodyY: 0.630,
+          bodyZ: 0,
+          podiumX: -1.570,
+          podiumY: 0.000,
+          podiumZ: -1.015
+        },
+        {
+          monitorX: 0,
+          monitorY: -0.175,
+          monitorZ: -0.020,
+          sceneX: 0,
+          sceneY: -0.340,
+          sceneZ: 0,
+          bodyX: 0,
+          bodyY: -0.175,
+          bodyZ: -0.020,
+          podiumX: -1.570,
+          podiumY: 0.005,
+          podiumZ: -1.670,
+          ease: "none",
+          duration: 0.5,
+        },
+        0
+      );
+
+      // Giữ nguyên các giá trị xoay của About cho phần còn lại của trang (duration 3.0)
+      tl.to(baseRot.current, {
+        duration: 3.0,
+      }, 0.5);
+    }
+
+    // Di chuyển Container sang phải khi cuộn từ Hero sang About (0 đến 0.5)
+    tl.fromTo(containerRef.current,
+      {
+        x: 0,
+        y: '8vh',
+        scale: 1.62,
+      },
+      {
+        x: xOffset * 1.0,
+        y: '8vh',
+        scale: 1.62,
+        force3D: true,
+        ease: "none",
+        duration: 0.5
+      },
+      0
+    );
+
+    // Giữ nguyên vị trí của Container ở bên phải trong suốt phần còn lại của trang (0.5 đến 3.5)
+    tl.to(containerRef.current,
+      {
+        x: xOffset * 1.0,
+        y: '8vh',
+        scale: 1.62,
+        force3D: true,
+        ease: "none",
+        duration: 3.0
+      },
+      0.5
+    );
 
     // 2. Cập nhật trạng thái cuộn khi người dùng đi vào/ra phần Technical Profile (About)
+    const aboutSection = document.getElementById("about");
     ScrollTrigger.create({
-      trigger: "#about",
+      trigger: aboutSection || undefined,
       start: "top top",
       onEnter: () => {
         scrollState.current = 'about';
@@ -109,6 +209,7 @@ export default function SplineHeroScene() {
         });
       }
     });
+
     // Buộc ScrollTrigger tính toán lại toàn bộ vị trí các trigger trên trang sau khi layout đã ổn định hoàn toàn
     setTimeout(() => {
       ScrollTrigger.refresh();
@@ -156,10 +257,15 @@ export default function SplineHeroScene() {
         const pitch = -y * 0.4;
         const yaw = x * 0.4;
 
+        const ox = pitch * cosT;
+        const oy = yaw;
+        const oz = -pitch * sinT;
+        lastHoverOffset.current = { x: ox, y: oy, z: oz };
+
         gsap.to(monitor.rotation, {
-          x: pitch * cosT,
-          y: 0.630 + yaw,
-          z: -pitch * sinT,
+          x: baseRot.current.monitorX + ox,
+          y: baseRot.current.monitorY + oy,
+          z: baseRot.current.monitorZ + oz,
           duration: 0.15,
           ease: 'power1.out',
           overwrite: 'auto'
@@ -179,10 +285,15 @@ export default function SplineHeroScene() {
           const pitch = -y * 0.4;
           const yaw = x * 0.4;
 
+          const ox = pitch * cosT;
+          const oy = yaw;
+          const oz = -pitch * sinT;
+          lastHoverOffset.current = { x: ox, y: oy, z: oz };
+
           gsap.to(monitor.rotation, {
-            x: pitch * cosT,
-            y: 0.630 + yaw,
-            z: -pitch * sinT,
+            x: baseRot.current.monitorX + ox,
+            y: baseRot.current.monitorY + oy,
+            z: baseRot.current.monitorZ + oz,
             duration: 0.15,
             ease: 'power1.out',
             overwrite: 'auto'
@@ -196,10 +307,15 @@ export default function SplineHeroScene() {
           const yaw = -0.25; // Quay sang trái -0.25 rad
           const pitch = 0;   // Góc nhìn ngang
 
+          const ox = pitch * cosT;
+          const oy = yaw;
+          const oz = -pitch * sinT;
+          lastHoverOffset.current = { x: ox, y: oy, z: oz };
+
           gsap.to(monitor.rotation, {
-            x: pitch * cosT,
-            y: 0.630 + yaw, // Khóa góc nhìn về bên trái
-            z: -pitch * sinT,
+            x: baseRot.current.monitorX + ox,
+            y: baseRot.current.monitorY + oy,
+            z: baseRot.current.monitorZ + oz,
             duration: 0.3,   // Mượt mà trượt về vị trí khóa
             ease: 'power1.out',
             overwrite: 'auto'
@@ -296,6 +412,19 @@ export default function SplineHeroScene() {
     };
   }, [isLoaded, calibrationMode, contextSafe]);
 
+  // Khi người dùng chọn đối tượng khác trong dropdown
+  const handleObjectChange = (name: string) => {
+    setSelectedObjectName(name);
+    if (!spline.current) return;
+    const obj = spline.current.findObjectByName(name);
+    selectedObjectRef.current = obj;
+    if (obj) {
+      setRotX(obj.rotation.x);
+      setRotY(obj.rotation.y);
+      setRotZ(obj.rotation.z);
+    }
+  };
+
   function onLoad(splineApp: Application) {
     if (isLoaded) return; // Chặn StrictMode chạy 2 lần
 
@@ -360,19 +489,6 @@ export default function SplineHeroScene() {
     setIsLoaded(true);
     setupAnimations();
   }
-
-  // Khi người dùng chọn đối tượng khác trong dropdown
-  const handleObjectChange = (name: string) => {
-    setSelectedObjectName(name);
-    if (!spline.current) return;
-    const obj = spline.current.findObjectByName(name);
-    selectedObjectRef.current = obj;
-    if (obj) {
-      setRotX(obj.rotation.x);
-      setRotY(obj.rotation.y);
-      setRotZ(obj.rotation.z);
-    }
-  };
 
   return (
     <>
@@ -493,7 +609,7 @@ export default function SplineHeroScene() {
       `}</style>
 
       {/* Bảng cân chỉnh góc xoay mô hình 3D sử dụng Portal để đưa ra ngoài stacking context */}
-      {isLoaded && typeof document !== 'undefined' && createPortal(
+      {SHOW_CALIBRATION_PANEL && isLoaded && typeof document !== 'undefined' && createPortal(
         <div 
           className="fixed bottom-12 left-6 z-[99999] p-4 bg-[#071A1F]/90 backdrop-blur-md border border-[#12D6DD]/30 rounded-xl text-[#A7B4BD] font-mono text-[11px] w-[310px] pointer-events-auto flex flex-col gap-3 shadow-lg select-none"
           style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}

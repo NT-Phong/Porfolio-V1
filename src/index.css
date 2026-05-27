@@ -1,5 +1,92 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@800;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500&family=Syne:wght@800;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap');
 @import "tailwindcss";
+
+:root {
+  --bg: var(--bg-deep);
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
+  --stroke: var(--border-subtle);
+}
+
+/* Scoped Utility: loader-font-display (Instrument Serif italic) */
+.loader-font-display {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Machined Doppelrand (Double-Bezel) Enclosures */
+.logo-outer-bezel {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.75), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 45px rgba(255, 90, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  backdrop-filter: blur(10px);
+  will-change: transform;
+}
+
+.logo-inner-bezel {
+  padding: 16px;
+  background: rgba(12, 19, 26, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px; /* Concentric rounded-[28px-12px] */
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Subtle Shimmer for Slogan Text */
+.brand-tagline-shimmer {
+  background: linear-gradient(90deg, #ff5a00 0%, #ffb84d 50%, #ff5a00 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: logo-shimmer 6s linear infinite;
+}
+
+@keyframes logo-shimmer {
+  to { background-position: 200% center; }
+}
+
+/* Pulsing Technical Status Dots for Live HUD */
+.status-dot-cyan {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-cyan);
+  animation: hud-pulse-cyan 1.6s ease-in-out infinite;
+}
+
+.status-dot-orange {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-orange);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-orange);
+  animation: hud-pulse-orange 1.6s ease-in-out infinite;
+}
+
+@keyframes hud-pulse-cyan {
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 12px var(--accent-cyan); }
+}
+
+@keyframes hud-pulse-orange {
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 12px var(--accent-orange); }
+}
+
 @import "./styles/tokens.css";
 @import "./styles/base.css";
 @import "./styles/components.css";

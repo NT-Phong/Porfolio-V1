@@ -10,20 +10,23 @@ export default function CareerSection() {
         {/* Left Column Content (Takes 55% width) */}
         <div className="w-full md:w-[55%] flex flex-col">
           {/* Header */}
-          <div className="mb-12 flex flex-col items-start gap-4">
+          <div className="mb-12 flex flex-col items-start gap-3">
             <div className="flex items-center gap-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent-orange)] animate-pulse" />
-              <span className="font-serif italic text-lg text-[color:var(--accent-orange)] tracking-wide">
-                Milestones
+              <span className="status-dot-orange animate-pulse" />
+              <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-[color:var(--accent-orange)]">
+                // 03 / MILESTONES
               </span>
             </div>
-            <h2 className="font-display text-5xl md:text-8xl font-black uppercase tracking-tight text-[color:var(--text-primary)]">
-              <span className="motion-mask">
-                <span className="motion-line" data-reveal-title>MY CAREER &</span>
+            <h2 className="font-display text-[11vw] md:text-[8vw] lg:text-[8.5rem] xl:text-[9.5rem] font-black uppercase leading-[0.85] tracking-tighter text-[color:var(--text-primary)] flex flex-col mt-2">
+              <span className="motion-mask overflow-hidden">
+                <span className="motion-line inline-block text-transparent [-webkit-text-stroke:1.5px_rgba(248,250,252,0.2)]" data-reveal-title>
+                  MY CAREER
+                </span>
               </span>
-              <br />
-              <span className="motion-mask">
-                <span className="motion-line" data-reveal-title>EXPERIENCE</span>
+              <span className="motion-mask overflow-hidden">
+                <span className="motion-line inline-block text-[color:var(--text-primary)] drop-shadow-[0_0_30px_rgba(255,255,255,0.06)]" data-reveal-title>
+                  EXPERIENCE
+                </span>
               </span>
             </h2>
           </div>

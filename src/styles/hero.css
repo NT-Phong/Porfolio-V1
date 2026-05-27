@@ -40,7 +40,7 @@
 }
 
 .hero-section-panel {
-  background: linear-gradient(180deg, rgba(2, 6, 8, 0) 0%, rgba(2, 6, 8, 0.18) 100%);
+  background: transparent;
   padding-top: var(--section-y) !important;
   padding-bottom: var(--section-y) !important;
 }
@@ -288,3 +288,45 @@
     left: auto !important;
   }
 }
+
+/* ─── Optimized Interactive Elements for HeroIntroSection ─── */
+.social-icon-link {
+  color: var(--text-secondary);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-block;
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .social-icon-link:hover {
+    transform: scale(1.18) rotate(6deg);
+    color: var(--accent-orange);
+  }
+}
+
+.hero-cta-btn {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .hero-cta-btn:hover {
+    transform: scale(1.03);
+  }
+}
+
+.hero-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.hero-cta-btn-arrow {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .hero-cta-btn:hover .hero-cta-btn-arrow {
+    transform: translateX(4px) scale(1.1);
+  }
+}
+

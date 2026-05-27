@@ -21,72 +21,95 @@ export default function ContactSection() {
       <div className="w-full flex flex-col md:flex-row gap-12 justify-between items-center relative z-30">
         
         {/* Left Column Content (Takes 55% width, holds both items) */}
-        <div className="w-full md:w-[55%] grid grid-cols-1 gap-12 md:grid-cols-2">
-          {/* Certifications */}
-          <div className="flex flex-col gap-6" data-reveal-certifications>
-            <motion.div
-              className="group relative rounded-[2rem] border border-[color:var(--border-glass)] bg-[color:var(--surface-card)] p-1 transition-all duration-300 h-full"
-              whileHover={{
-                y: -5,
-                borderColor: 'var(--accent-cyan)',
-                boxShadow: 'var(--shadow-card)',
-              }}
-            >
-              <div className="flex flex-col gap-6 rounded-[calc(2rem-4px)] bg-[color:var(--surface-glass)] backdrop-blur-md p-7 shadow-[var(--shadow-glass)] h-full">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[color:var(--text-muted)] font-mono">
-                    Credentials
-                  </span>
-                  <div className="flex items-center gap-6">
-                    <div className="h-16 w-[2px] bg-[color:var(--accent-cyan)]" />
-                    <div className="flex flex-col">
-                      <span className="font-display text-3xl font-black text-[color:var(--text-primary)]">
-                        CERTIFICATIONS
-                      </span>
-                      <span className="text-[9px] font-bold uppercase tracking-widest text-[color:var(--text-muted)] font-mono">
-                        Verified Achievements
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col gap-6 mt-4 pl-6 border-l border-[color:var(--border-subtle)]">
-                  {CERTIFICATIONS.map((c) => (
-                    <div key={c.name} className="flex flex-col gap-1 transition-all duration-300 hover:translate-x-2">
-                      <span className="text-base font-bold text-[color:var(--text-primary)]">{c.name}</span>
-                      <span className="text-xs text-[color:var(--text-secondary)] font-mono">{c.issuer} · {c.date}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+        <div className="w-full md:w-[55%] flex flex-col gap-12">
+          {/* Section Header */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <span className="status-dot-cyan animate-pulse" />
+              <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-[color:var(--accent-cyan)]">
+                // 04 / LET'S CONNECT
+              </span>
+            </div>
+            <h2 className="font-display text-[12vw] md:text-[8.5vw] lg:text-[8.5rem] xl:text-[9.5rem] font-black uppercase leading-[0.85] tracking-tighter text-[color:var(--text-primary)] flex flex-col mt-2">
+              <span className="motion-mask overflow-hidden">
+                <span className="motion-line inline-block text-transparent [-webkit-text-stroke:1.5px_rgba(248,250,252,0.2)]" data-reveal-title>
+                  GET IN
+                </span>
+              </span>
+              <span className="motion-mask overflow-hidden">
+                <span className="motion-line inline-block text-[color:var(--text-primary)] drop-shadow-[0_0_30px_rgba(255,255,255,0.06)]" data-reveal-title>
+                  TOUCH
+                </span>
+              </span>
+            </h2>
           </div>
 
-          {/* Contact */}
-          <div className="flex flex-col gap-6" data-reveal-contact>
-            <motion.div
-              className="group relative rounded-[2rem] border border-[color:var(--border-glass)] bg-[color:var(--surface-card)] p-1 transition-all duration-300 h-full"
-              whileHover={{
-                y: -5,
-                borderColor: 'var(--accent-orange)',
-                boxShadow: 'var(--shadow-card)',
-              }}
-            >
-              <div className="flex flex-col gap-6 rounded-[calc(2rem-4px)] bg-[color:var(--surface-glass)] backdrop-blur-md p-7 shadow-[var(--shadow-glass)] h-full justify-between">
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col items-start gap-2">
-                    <span className="font-serif italic text-lg text-[color:var(--accent-orange)] tracking-wide">
-                      Let's Connect
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+            {/* Certifications */}
+            <div className="flex flex-col gap-6" data-reveal-certifications>
+              <motion.div
+                className="group relative rounded-[2rem] border border-[color:var(--border-glass)] bg-[color:var(--surface-card)] p-1 transition-all duration-300 h-full"
+                whileHover={{
+                  y: -5,
+                  borderColor: 'var(--accent-cyan)',
+                  boxShadow: 'var(--shadow-card)',
+                }}
+              >
+                <div className="flex flex-col gap-6 rounded-[calc(2rem-4px)] bg-[color:var(--surface-glass)] backdrop-blur-md p-7 shadow-[var(--shadow-glass)] h-full">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[color:var(--text-muted)] font-mono">
+                      Credentials
                     </span>
                     <div className="flex items-center gap-6">
-                      <div className="h-16 w-[2px] bg-[color:var(--accent-orange)]" />
-                      <div className="flex flex-col items-start">
-                        <h2 className="font-display text-4xl font-black text-[color:var(--text-primary)] leading-tight tracking-tight">
-                          GET IN TOUCH
-                        </h2>
+                      <div className="h-16 w-[2px] bg-[color:var(--accent-cyan)]" />
+                      <div className="flex flex-col">
+                        <span className="font-display text-3xl font-black text-[color:var(--text-primary)]">
+                          CERTIFICATIONS
+                        </span>
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-[color:var(--text-muted)] font-mono">
+                          Verified Achievements
+                        </span>
                       </div>
                     </div>
                   </div>
+                  
+                  <div className="flex flex-col gap-6 mt-4 pl-6 border-l border-[color:var(--border-subtle)]">
+                    {CERTIFICATIONS.map((c) => (
+                      <div key={c.name} className="flex flex-col gap-1 transition-all duration-300 hover:translate-x-2">
+                        <span className="text-base font-bold text-[color:var(--text-primary)]">{c.name}</span>
+                        <span className="text-xs text-[color:var(--text-secondary)] font-mono">{c.issuer} · {c.date}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Contact */}
+            <div className="flex flex-col gap-6" data-reveal-contact>
+              <motion.div
+                className="group relative rounded-[2rem] border border-[color:var(--border-glass)] bg-[color:var(--surface-card)] p-1 transition-all duration-300 h-full"
+                whileHover={{
+                  y: -5,
+                  borderColor: 'var(--accent-orange)',
+                  boxShadow: 'var(--shadow-card)',
+                }}
+              >
+                <div className="flex flex-col gap-6 rounded-[calc(2rem-4px)] bg-[color:var(--surface-glass)] backdrop-blur-md p-7 shadow-[var(--shadow-glass)] h-full justify-between">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col items-start gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[color:var(--text-muted)] font-mono">
+                        Info
+                      </span>
+                      <div className="flex items-center gap-6">
+                        <div className="h-16 w-[2px] bg-[color:var(--accent-orange)]" />
+                        <div className="flex flex-col items-start">
+                          <span className="font-display text-3xl font-black text-[color:var(--text-primary)]">
+                            CONTACT DETAILS
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   
                   <div className="flex flex-col items-start gap-4 mt-4">
                     <a
@@ -134,6 +157,7 @@ export default function ContactSection() {
             </motion.div>
           </div>
         </div>
+      </div>
 
         {/* Right Column Spacer for 3D Model (Takes 40% width) */}
         <div className="w-full md:w-[40%] h-[300px] md:h-[400px] pointer-events-none" />

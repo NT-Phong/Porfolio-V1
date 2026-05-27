@@ -38,7 +38,11 @@ export default function HeaderV1() {
   return (
     <>
       <HeaderSidebar isActive={isSidebarActive} onClose={handleCloseClick} />
-      <HeaderMenu isHamburgActive={isHamburgActive} onHamburgClick={handleHamburgClick} />
+      <HeaderMenu 
+        isHamburgActive={isHamburgActive} 
+        isSidebarActive={isSidebarActive} 
+        onHamburgClick={handleHamburgClick} 
+      />
     </>
   );
 }

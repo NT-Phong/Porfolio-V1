@@ -1,10 +1,8 @@
-import { motion } from 'motion/react';
 import { Github, MapPin, Linkedin, Twitter, Instagram, ArrowRight } from 'lucide-react';
 import { OWNER, EDUCATION } from '../../data/portfolio';
 import ScrambleText from '../utilities/ScrambleText';
 
 export default function HeroIntroSection() {
-  const springConfig = { type: 'spring', stiffness: 300, damping: 15 };
 
   return (
     <section className="relative z-20 flex min-h-[100dvh] w-full flex-col font-sans overflow-hidden">
@@ -20,50 +18,42 @@ export default function HeroIntroSection() {
         
         {/* Social Icons (Far Left) */}
         <div className="gsap-social-icons flex flex-row md:flex-col items-center justify-start gap-6 md:gap-8 mb-8 md:mb-0 md:self-end md:pb-8">
-          <motion.a
+          <a
             href={`https://${OWNER.github}`}
             target="_blank"
             rel="noreferrer"
-            className="text-[color:var(--text-secondary)] transition-colors duration-300"
+            className="social-icon-link"
             data-motion="magnetic"
-            whileHover={{ scale: 1.18, rotate: 6, color: 'var(--accent-orange)' }}
-            transition={springConfig}
           >
             <Github size={22} strokeWidth={1.5} />
-          </motion.a>
-          <motion.a
+          </a>
+          <a
             href="https://linkedin.com"
             target="_blank"
             rel="noreferrer"
-            className="text-[color:var(--text-secondary)] transition-colors duration-300"
+            className="social-icon-link"
             data-motion="magnetic"
-            whileHover={{ scale: 1.18, rotate: 6, color: 'var(--accent-orange)' }}
-            transition={springConfig}
           >
             <Linkedin size={22} strokeWidth={1.5} />
-          </motion.a>
-          <motion.a
+          </a>
+          <a
             href="https://x.com"
             target="_blank"
             rel="noreferrer"
-            className="text-[color:var(--text-secondary)] transition-colors duration-300"
+            className="social-icon-link"
             data-motion="magnetic"
-            whileHover={{ scale: 1.18, rotate: 6, color: 'var(--accent-orange)' }}
-            transition={springConfig}
           >
             <Twitter size={22} strokeWidth={1.5} />
-          </motion.a>
-          <motion.a
+          </a>
+          <a
             href="https://instagram.com"
             target="_blank"
             rel="noreferrer"
-            className="text-[color:var(--text-secondary)] transition-colors duration-300"
+            className="social-icon-link"
             data-motion="magnetic"
-            whileHover={{ scale: 1.18, rotate: 6, color: 'var(--accent-orange)' }}
-            transition={springConfig}
           >
             <Instagram size={22} strokeWidth={1.5} />
-          </motion.a>
+          </a>
         </div>
 
         {/* Left Content (Name) */}
@@ -156,23 +146,16 @@ export default function HeroIntroSection() {
           </div>
 
           <div className="flex flex-wrap items-center gap-4 mt-4 w-full md:w-auto">
-            <motion.a
+            <a
               href={`mailto:${OWNER.email}`}
-              className="group relative flex items-center justify-between gap-6 cursor-pointer rounded-full bg-gradient-to-r from-[color:var(--accent-orange)] to-[color:var(--accent-orange-hover)] pl-8 pr-3 py-3 text-xs font-extrabold uppercase tracking-widest text-white shadow-[var(--shadow-orange)] w-full md:w-auto"
+              className="hero-cta-btn group relative flex items-center justify-between gap-6 cursor-pointer rounded-full bg-gradient-to-r from-[color:var(--accent-orange)] to-[color:var(--accent-orange-hover)] pl-8 pr-3 py-3 text-xs font-extrabold uppercase tracking-widest text-white shadow-[var(--shadow-orange)] w-full md:w-auto"
               data-motion="magnetic"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
             >
               <span>HIRE ME</span>
-              <motion.span 
-                className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center"
-                whileHover={{ x: 4, scale: 1.1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 12 }}
-              >
+              <span className="hero-cta-btn-arrow w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
                 <ArrowRight size={14} />
-              </motion.span>
-            </motion.a>
+              </span>
+            </a>
           </div>
         </div>
 
