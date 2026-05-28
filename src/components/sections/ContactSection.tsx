@@ -30,7 +30,7 @@ export default function ContactSection() {
                 // 04 / LET'S CONNECT
               </span>
             </div>
-            <h2 className="font-display text-[12vw] md:text-[8.5vw] lg:text-[8.5rem] xl:text-[9.5rem] font-black uppercase leading-[0.85] tracking-tighter text-[color:var(--text-primary)] flex flex-col mt-2">
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase leading-[0.9] tracking-tighter text-[color:var(--text-primary)] flex flex-col mt-2">
               <span className="motion-mask overflow-hidden">
                 <span className="motion-line inline-block text-transparent [-webkit-text-stroke:1.5px_rgba(248,250,252,0.2)]" data-reveal-title>
                   GET IN

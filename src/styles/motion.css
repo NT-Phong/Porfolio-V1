@@ -10,7 +10,6 @@
 
 .motion-line {
   display: inline-block;
-  transform: translateY(105%) rotate(2deg);
-  opacity: 0;
+  /* NOTE: NO opacity:0 here — GSAP owns the reveal. CSS hiding was blocking all section titles. */
   will-change: transform, opacity;
 }

@@ -1,23 +1,22 @@
-import { motion } from 'motion/react';
 import { EXPERIENCE } from '../../data/portfolio';
 import SkillBadge from '../ui/SkillBadge';
 
 export default function CareerSection() {
   return (
     <section id="career" className="hero-section-panel career-section relative z-20 min-h-[100dvh] w-full px-6 py-24 md:px-24">
-      <div className="w-full flex flex-col md:flex-row gap-12 justify-between items-start">
+      <div className="w-full max-w-5xl mx-auto flex flex-col items-center justify-center">
         
-        {/* Left Column Content (Takes 55% width) */}
-        <div className="w-full md:w-[55%] flex flex-col">
+        {/* Main Content Area */}
+        <div className="w-full flex flex-col items-center">
           {/* Header */}
-          <div className="mb-12 flex flex-col items-start gap-3">
+          <div className="mb-12 flex flex-col items-center text-center gap-3">
             <div className="flex items-center gap-3">
               <span className="status-dot-orange animate-pulse" />
               <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-[color:var(--accent-orange)]">
                 // 03 / MILESTONES
               </span>
             </div>
-            <h2 className="font-display text-[11vw] md:text-[8vw] lg:text-[8.5rem] xl:text-[9.5rem] font-black uppercase leading-[0.85] tracking-tighter text-[color:var(--text-primary)] flex flex-col mt-2">
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase leading-[0.9] tracking-tighter text-[color:var(--text-primary)] flex flex-col mt-2 items-center">
               <span className="motion-mask overflow-hidden">
                 <span className="motion-line inline-block text-transparent [-webkit-text-stroke:1.5px_rgba(248,250,252,0.2)]" data-reveal-title>
                   MY CAREER
@@ -31,8 +30,8 @@ export default function CareerSection() {
             </h2>
           </div>
 
-          {/* Timeline Container (shifted left asymmetric layout) */}
-          <div className="timeline-container timeline-asymmetric-container relative mt-8 w-full">
+          {/* Timeline Container */}
+          <div className="timeline-container relative mt-8 w-full">
             {/* Axis line */}
             <div className="timeline-axis">
               <div className="timeline-line-base" />
@@ -45,9 +44,18 @@ export default function CareerSection() {
             {/* Timeline Items */}
             {EXPERIENCE.map((item, idx) => (
               <div key={idx} className="career-item">
-                {/* Left Side (Empty on desktop, handles year on mobile) */}
+                {/* Left Side: Job Title & Company */}
                 <div className="career-left">
                   <span className="career-mobile-year">{item.year}</span>
+                  <h3 className="font-display text-xl md:text-2xl font-black text-[color:var(--text-primary)] leading-tight">
+                    {item.role}
+                  </h3>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--accent-cyan)] mt-1 font-mono">
+                    {item.company}
+                  </p>
+                  <p className="text-[10px] text-[color:var(--text-muted)] mt-0.5 font-mono">
+                    {item.period}
+                  </p>
                 </div>
 
                 {/* Center Node / Year Column */}
@@ -56,44 +64,22 @@ export default function CareerSection() {
                   <span className="career-year">{item.year}</span>
                 </div>
 
-                {/* Right Side (Desktop text-left: Job title & Description combined) */}
+                {/* Right Side: Description */}
                 <div className="career-right">
-                  <motion.div
-                    className="group relative rounded-[2rem] border border-[color:var(--border-glass)] bg-[color:var(--surface-card)] p-1 transition-all duration-300"
-                    whileHover={{
-                      y: -5,
-                      borderColor: 'var(--accent-cyan)',
-                      boxShadow: 'var(--shadow-card)',
-                    }}
-                  >
-                    <div className="flex flex-col rounded-[calc(2rem-4px)] bg-[color:var(--surface-glass)] backdrop-blur-md p-7 shadow-[var(--shadow-glass)] h-full">
-                      <h3 className="font-display text-2xl font-black text-[color:var(--text-primary)] leading-tight">
-                        {item.role}
-                      </h3>
-                      <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--accent-cyan)] mt-1.5 font-mono">
-                        {item.company}
-                      </p>
-                      <p className="text-[10px] text-[color:var(--text-muted)] mt-1 font-mono">
-                        {item.period}
-                      </p>
-                      <p className="mt-3 text-sm leading-relaxed text-[color:var(--text-secondary)]">
-                        {item.description}
-                      </p>
-                      <div className="mt-4 flex flex-wrap gap-2 justify-start">
-                        {item.skills.map((s) => (
-                          <SkillBadge key={s} label={s} accent="cyan" />
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
+                  <p className="text-sm leading-relaxed text-[color:var(--text-secondary)]">
+                    {item.description}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2 justify-start">
+                    {item.skills.map((s) => (
+                      <SkillBadge key={s} label={s} accent="cyan" />
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right Column Spacer for 3D Model (Takes 40% width) */}
-        <div className="w-full md:w-[40%] h-[300px] md:h-[400px] pointer-events-none" />
       </div>
     </section>
   );

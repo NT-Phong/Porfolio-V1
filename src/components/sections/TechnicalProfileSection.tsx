@@ -15,7 +15,7 @@ export default function TechnicalProfileSection() {
                 // 01 / TECHNICAL PROFILE
               </span>
             </div>
-            <h2 className="font-display text-[13vw] md:text-[9vw] lg:text-[9.5rem] xl:text-[11rem] font-black leading-[0.85] text-[color:var(--text-primary)] tracking-tighter flex flex-col mt-2">
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] text-[color:var(--text-primary)] tracking-tighter flex flex-col mt-2">
               <span className="motion-mask overflow-hidden">
                 <span className="motion-line inline-block text-transparent [-webkit-text-stroke:1.5px_rgba(248,250,252,0.2)]" data-reveal-title>
                   MY

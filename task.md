@@ -58,3 +58,22 @@ Nhật ký đầy đủ và chi tiết các công việc đã thực hiện qua 
   - `[x]` Định cấu trúc lại Career: timeline asymmetric dồn bên Trái (55%), model bên Phải (40%).
   - `[x]` Định cấu trúc lại Contact: Certifications và Contact dồn bên Trái (55%) chia cột dọc, model bên Phải (40%).
   - `[x]` Đóng gói thử nghiệm sản phẩm thành công bằng `npm.cmd run build` đạt chất lượng cao, không phát sinh lỗi biên dịch.
+
+- `[x]` **Phase 13: Preloader Transition Flash Fix (FOUC)** (Sửa lỗi giật nháy màn hình preloader)
+  - `[x]` Cấu hình thuộc tính CSS mặc định ẩn/thu nhỏ cho các phần tử logo, bezel, chữ và slogan của branding climax để tránh flash unstyled.
+  - `[x]` Đảm bảo `.loader-kicker` và `.loader-hud-container` ẩn theo mặc định trước khi GSAP kích hoạt.
+  - `[x]` Đóng gói và chạy thử nghiệm biên dịch bằng `npm.cmd run build` để kiểm tra độ tin cậy.
+
+- `[x]` **Phase 14: Section Typography Scale Adjustment** (Điều chỉnh kích thước font chữ các Section)
+  - `[x]` Cập nhật tiêu đề trong `TechnicalProfileSection.tsx` về dải kích thước `text-4xl` đến `xl:text-8xl`.
+  - `[x]` Cập nhật tiêu đề trong `ProjectsSection.tsx` về dải kích thước `text-4xl` đến `xl:text-8xl`.
+  - `[x]` Cập nhật tiêu đề trong `CareerSection.tsx` về dải kích thước `text-4xl` đến `xl:text-8xl`.
+  - `[x]` Cập nhật tiêu đề trong `ContactSection.tsx` về dải kích thước `text-4xl` đến `xl:text-8xl`.
+  - `[x]` Đóng gói và chạy thử nghiệm biên dịch bằng `npm.cmd run build` để kiểm tra độ tin cậy.
+
+- `[x]` **Phase 15: Centered Career Timeline Upgrade (moncy.dev style)** (Nâng cấp dòng thời gian Career)
+  - `[x]` Cấu hình lại Grid và ẩn tính năng lệch trái asymmetric trong `hero.css`.
+  - `[x]` Chuyển đổi cấu trúc DOM trong `CareerSection.tsx` dồn H3 và Công ty sang cột trái, năm ở giữa và mô tả ở cột phải.
+  - `[x]` Tháo gỡ các thẻ card bao quanh mô tả để tạo không gian mở, tối giản và phóng khoáng.
+  - `[x]` Sửa lỗi hiển thị sai lệch cột/swapped columns trên Desktop bằng cách sửa lỗi cú pháp `grid-template-cols` thành `grid-template-columns` và gán thuộc tính `grid-column` cho các khối con.
+  - `[x]` Đóng gói và chạy thử nghiệm biên dịch bằng `npm.cmd run build` để xác minh độ tin cậy.

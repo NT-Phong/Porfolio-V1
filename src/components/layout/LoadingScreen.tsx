@@ -293,7 +293,7 @@ export default function LoadingScreen() {
             backgroundSize: "24px 24px"
           }} />
         </div>
-        {/* Kicker "Portfolio" trên góc trái */}
+        {/* Kicker "Phong.Dev" trên góc trái */}
         <div
           className="loader-kicker"
           style={{
@@ -307,7 +307,7 @@ export default function LoadingScreen() {
             fontWeight: 500,
           }}
         >
-          Portfolio
+          Phong.Dev
         </div>
 
         {/* Live HUD (SYS.PING + Availability FOMO + Ticking Local Clock) góc phải */}
@@ -529,6 +529,33 @@ export default function LoadingScreen() {
           </div>
         </div>
       </div>
+      <style>{`
+        .loader-ui-container .loader-kicker,
+        .loader-ui-container .loader-hud-container {
+          opacity: 0;
+        }
+        .loader-brand-container {
+          opacity: 0;
+        }
+        .loader-brand-container .logo-outer-bezel {
+          opacity: 0;
+          transform: scale(1.15);
+        }
+        .loader-brand-container .logo-p-path {
+          stroke-dasharray: 300;
+          stroke-dashoffset: 300;
+        }
+        .loader-brand-container .logo-orange-dot {
+          opacity: 0;
+        }
+        .loader-brand-container .char {
+          transform: translateY(105%);
+        }
+        .loader-brand-container .word {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+      `}</style>
     </div>
   );
 }
