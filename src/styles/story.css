@@ -1,7 +1,4 @@
 .main-scroll-container {
-  background:
-    radial-gradient(circle at top, rgba(255, 122, 26, 0.1), transparent 28%),
-    radial-gradient(circle at 82% 14%, rgba(18, 214, 221, 0.1), transparent 24%),
-    linear-gradient(180deg, var(--bg-base) 0%, var(--bg-deep) 100%);
+  background: transparent;
   color: var(--text-primary);
 }

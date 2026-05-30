@@ -547,11 +547,11 @@ export default function SplineHeroScene() {
           <div className="spline-dialogue-bubble-float">
             {/* Card kính mờ cao cấp */}
             <div style={{
-              background: 'linear-gradient(135deg, rgba(7,26,31,0.96) 0%, rgba(16,42,48,0.94) 100%)',
+              background: 'linear-gradient(135deg, rgba(11,10,9,0.96) 0%, rgba(21,20,18,0.94) 100%)',
               backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(18,214,221,0.5)',
+              border: '1px solid rgba(27,170,160,0.5)',
               borderRadius: '16px',
-              boxShadow: '0 0 30px rgba(18,214,221,0.2), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
+              boxShadow: '0 0 30px rgba(27,170,160,0.2), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
               padding: '12px 16px 14px',
               display: 'flex',
               flexDirection: 'column',
@@ -567,8 +567,8 @@ export default function SplineHeroScene() {
                 transform: 'translateX(-50%)',
                 width: '14px',
                 height: '14px',
-                background: 'linear-gradient(135deg, rgba(16,42,48,0.94), rgba(16,42,48,0.94))',
-                border: '1px solid rgba(18,214,221,0.5)',
+                background: 'linear-gradient(135deg, rgba(21,20,18,0.94), rgba(21,20,18,0.94))',
+                border: '1px solid rgba(27,170,160,0.5)',
                 borderTop: 'none',
                 borderLeft: 'none',
                 rotate: '45deg',
@@ -581,14 +581,14 @@ export default function SplineHeroScene() {
                 fontWeight: 700,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
-                color: '#FF7A1A',
+                color: 'var(--accent-orange)',
                 lineHeight: 1,
               }}>MY SKILLS</span>
 
               {/* Nội dung chính */}
               <p style={{
                 fontSize: '11px',
-                color: '#F8FAFC',
+                color: 'var(--text-primary)',
                 lineHeight: '1.5',
                 fontWeight: 500,
                 textAlign: 'center',
@@ -606,9 +606,9 @@ export default function SplineHeroScene() {
                     fontWeight: 700,
                     padding: '2px 6px',
                     borderRadius: '4px',
-                    background: 'rgba(18,214,221,0.12)',
-                    border: '1px solid rgba(18,214,221,0.3)',
-                    color: '#12D6DD',
+                    background: 'rgba(var(--accent-cyan-rgb),0.12)',
+                    border: '1px solid rgba(var(--accent-cyan-rgb),0.3)',
+                    color: 'var(--accent-cyan)',
                     letterSpacing: '0.05em',
                   }}>{tag}</span>
                 ))}
@@ -639,28 +639,28 @@ export default function SplineHeroScene() {
       {/* Bảng cân chỉnh góc xoay mô hình 3D sử dụng Portal để đưa ra ngoài stacking context */}
       {SHOW_CALIBRATION_PANEL && isLoaded && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed bottom-12 left-6 z-[99999] p-4 bg-[#071A1F]/90 backdrop-blur-md border border-[#12D6DD]/30 rounded-xl text-[#A7B4BD] font-mono text-[11px] w-[310px] pointer-events-auto flex flex-col gap-3 shadow-lg select-none"
+          className="fixed bottom-12 left-6 z-[99999] p-4 bg-bg-surface/90 backdrop-blur-md border border-accent-cyan/30 rounded-xl text-text-secondary font-mono text-[11px] w-[310px] pointer-events-auto flex flex-col gap-3 shadow-lg select-none"
           style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
         >
-          <div className="flex items-center justify-between border-b border-[#12D6DD]/20 pb-2">
-            <span className="text-[#12D6DD] font-bold tracking-widest uppercase">3D CALIBRATION PANEL</span>
+          <div className="flex items-center justify-between border-b border-accent-cyan/20 pb-2">
+            <span className="text-accent-cyan font-bold tracking-widest uppercase">3D CALIBRATION PANEL</span>
             <label className="flex items-center gap-1.5 cursor-pointer">
               <input 
                 type="checkbox" 
                 checked={calibrationMode}
                 onChange={(e) => setCalibrationMode(e.target.checked)}
-                className="accent-[#FF7A1A]"
+                className="accent-accent-orange"
               />
-              <span className={calibrationMode ? "text-[#FF7A1A]" : ""}>Calib</span>
+              <span className={calibrationMode ? "text-accent-orange" : ""}>Calib</span>
             </label>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-[#A7B4BD]/80">Select Object:</span>
+            <span className="text-text-secondary/80">Select Object:</span>
             <select
               value={selectedObjectName}
               onChange={(e) => handleObjectChange(e.target.value)}
-              className="bg-[#102A30] border border-[#12D6DD]/20 rounded px-2 py-1 text-white font-mono text-[11px] focus:outline-none focus:border-[#12D6DD]/50"
+              className="bg-bg-base border border-accent-cyan/20 rounded px-2 py-1 text-white font-mono text-[11px] focus:outline-none focus:border-accent-cyan/50"
             >
               {objectList.map((name) => (
                 <option key={name} value={name}>{name}</option>
@@ -682,7 +682,7 @@ export default function SplineHeroScene() {
                 value={rotX} 
                 disabled={!calibrationMode}
                 onChange={(e) => setRotX(parseFloat(e.target.value))}
-                className="w-full accent-[#12D6DD]"
+                className="w-full accent-accent-cyan"
               />
             </div>
 
@@ -699,7 +699,7 @@ export default function SplineHeroScene() {
                 value={rotY} 
                 disabled={!calibrationMode}
                 onChange={(e) => setRotY(parseFloat(e.target.value))}
-                className="w-full accent-[#12D6DD]"
+                className="w-full accent-accent-cyan"
               />
             </div>
 
@@ -716,14 +716,14 @@ export default function SplineHeroScene() {
                 value={rotZ} 
                 disabled={!calibrationMode}
                 onChange={(e) => setRotZ(parseFloat(e.target.value))}
-                className="w-full accent-[#12D6DD]"
+                className="w-full accent-accent-cyan"
               />
             </div>
           </div>
 
-          <div className="text-[10px] border-t border-[#12D6DD]/20 pt-2 text-[#A7B4BD]/70 flex flex-col gap-1">
+          <div className="text-[10px] border-t border-accent-cyan/20 pt-2 text-text-secondary/70 flex flex-col gap-1">
             {calibrationMode ? (
-              <span className="text-[#FF7A1A]">⚠️ Kéo thanh trượt để xoay, bỏ tích 'Calib' để kiểm tra hiệu ứng chuột hover.</span>
+              <span className="text-accent-orange">⚠️ Kéo thanh trượt để xoay, bỏ tích 'Calib' để kiểm tra hiệu ứng chuột hover.</span>
             ) : (
               <span className="text-green-400">✔️ Chế độ chuột theo dõi đang bật.</span>
             )}

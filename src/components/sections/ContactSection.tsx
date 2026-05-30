@@ -9,7 +9,7 @@ export default function ContactSection() {
       className="hero-section-panel section-4 relative z-20 flex min-h-[100dvh] w-full items-center justify-center overflow-hidden px-6 py-24 md:px-24"
     >
       {/* HUD Background Rings */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+      <div data-speed="0.8" className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
         <div className="hero-hud-ring-1 absolute h-[300px] w-[300px] rounded-full border md:h-[600px] md:w-[600px]" />
         <div className="hero-hud-ring-2 absolute h-[450px] w-[450px] rounded-full border md:h-[900px] md:w-[900px]" />
         <div className="hero-hud-ring-3 absolute h-[150px] w-[150px] rounded-full border md:h-[300px] md:w-[300px]" />

@@ -9,15 +9,15 @@ import AppWrapper from './components/layout/AppWrapper';
 export default function App() {
   return (
     <LoadingProvider>
-      <SmoothScrollProvider>
-        <AppWrapper>
-          <Dependency />
-          <HeaderV1 />
-          <AppProviders>
+      <AppWrapper>
+        <Dependency />
+        <HeaderV1 />
+        <AppProviders>
+          <SmoothScrollProvider>
             <AppRoutes />
-          </AppProviders>
-        </AppWrapper>
-      </SmoothScrollProvider>
+          </SmoothScrollProvider>
+        </AppProviders>
+      </AppWrapper>
     </LoadingProvider>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Film, Globe, Github, Sparkles, AlertCircle } from 'lucide-react';
 import { playClickSound } from '../utilities/clickSound';
@@ -28,22 +29,36 @@ interface ProjectDemoModalProps {
 }
 
 export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDemoModalProps) {
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeTab, setActiveTab] = useState<'live' | 'video' | 'mockup'>('live');
   const [iframeLoading, setIframeLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  // Set mounted on client side to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Sync project to activeProject only when it is not null
+  useEffect(() => {
+    if (project) {
+      setActiveProject(project);
+    }
+  }, [project]);
 
   // Khóa cuộn trang chính khi mở Modal và giải phóng khi đóng
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && project) {
       document.body.style.overflow = 'hidden';
       // Xác định tab mặc định dựa trên dữ liệu có sẵn
-      if (project?.demoUrl) {
+      if (project.demoUrl) {
         setActiveTab('live');
-      } else if (project?.videoUrl) {
+      } else if (project.videoUrl) {
         setActiveTab('video');
       } else {
         setActiveTab('mockup');
       }
-    } else {
+    } else if (!isOpen) {
       document.body.style.overflow = '';
     }
     return () => {
@@ -51,22 +66,23 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
     };
   }, [isOpen, project]);
 
-  if (!project) return null;
-
-  const isOrange = project.accent === 'orange';
-  const accentColor = isOrange ? 'var(--accent-orange)' : 'var(--accent-cyan)';
-  const glowShadow = isOrange 
-    ? '0 0 30px rgba(255, 122, 26, 0.15)' 
-    : '0 0 30px rgba(18, 214, 221, 0.15)';
+  if (!mounted) return null;
 
   const handleClose = () => {
     playClickSound();
     onClose();
   };
 
-  return (
+  // Determine display values using activeProject to avoid runtime errors during exit transitions
+  const isOrange = activeProject?.accent === 'orange';
+  const accentColor = isOrange ? 'var(--accent-orange)' : 'var(--accent-cyan)';
+  const glowShadow = isOrange 
+    ? '0 0 30px rgba(255, 122, 26, 0.15)' 
+    : '0 0 30px rgba(18, 214, 221, 0.15)';
+
+  return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && activeProject && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-6 overflow-y-auto">
           {/* Overlay nền mờ tối dần */}
           <motion.div
@@ -101,7 +117,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
 
                 {/* Tabs điều khiển */}
                 <div className="flex items-center gap-2">
-                  {project.demoUrl && (
+                  {activeProject.demoUrl && (
                     <button
                       onClick={() => { playClickSound(); setActiveTab('live'); }}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[10px] font-bold uppercase tracking-wider transition-all ${
@@ -114,7 +130,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                       Live Demo
                     </button>
                   )}
-                  {project.videoUrl && (
+                  {activeProject.videoUrl && (
                     <button
                       onClick={() => { playClickSound(); setActiveTab('video'); }}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[10px] font-bold uppercase tracking-wider transition-all ${
@@ -130,7 +146,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                   <button
                     onClick={() => { playClickSound(); setActiveTab('mockup'); }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[10px] font-bold uppercase tracking-wider transition-all ${
-                      activeTab === 'mockup' && !project.demoUrl && !project.videoUrl
+                      activeTab === 'mockup' && !activeProject.demoUrl && !activeProject.videoUrl
                         ? 'bg-white/10 text-white border border-white/20'
                         : activeTab === 'mockup'
                         ? 'bg-white/5 text-white border border-white/10'
@@ -145,7 +161,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
               {/* Vùng hiển thị chính */}
               <div className="flex-1 w-full relative overflow-hidden bg-[color:var(--bg-deep)]">
                 {/* 1. Live Iframe View */}
-                {activeTab === 'live' && project.demoUrl && (
+                {activeTab === 'live' && activeProject.demoUrl && (
                   <div className="w-full h-full relative">
                     {iframeLoading && (
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--bg-deep)] gap-4">
@@ -156,8 +172,8 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                       </div>
                     )}
                     <iframe
-                      src={project.demoUrl}
-                      title={project.name}
+                      src={activeProject.demoUrl}
+                      title={activeProject.name}
                       className="w-full h-full border-none bg-white"
                       onLoad={() => setIframeLoading(false)}
                       sandbox="allow-scripts allow-same-origin allow-popups"
@@ -166,10 +182,10 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                 )}
 
                 {/* 2. Video Player View */}
-                {activeTab === 'video' && project.videoUrl && (
+                {activeTab === 'video' && activeProject.videoUrl && (
                   <div className="w-full h-full flex items-center justify-center p-6 bg-black">
                     <video
-                      src={project.videoUrl}
+                      src={activeProject.videoUrl}
                       controls
                       autoPlay
                       loop
@@ -180,17 +196,17 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                 )}
 
                 {/* 3. Static Mockup View (Fallback) */}
-                {(activeTab === 'mockup' || (!project.demoUrl && activeTab === 'live') || (!project.videoUrl && activeTab === 'video')) && (
+                {(activeTab === 'mockup' || (!activeProject.demoUrl && activeTab === 'live') || (!activeProject.videoUrl && activeTab === 'video')) && (
                   <div className="w-full h-full relative overflow-hidden group">
                     <img
-                      src={project.image}
-                      alt={project.name}
+                      src={activeProject.image}
+                      alt={activeProject.name}
                       className="w-full h-full object-cover object-center filter saturate-[0.85] transition-transform duration-1000 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-deep)] via-transparent to-black/35" />
                     
                     {/* Sandbox Warning/Tip if no live demo is available */}
-                    {!project.demoUrl && (
+                    {!activeProject.demoUrl && (
                       <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-md flex items-start gap-3">
                         <AlertCircle className="text-yellow-500 shrink-0 mt-0.5" size={16} />
                         <div className="flex-1">
@@ -235,13 +251,13 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                       backgroundColor: isOrange ? 'rgba(255,122,26,0.06)' : 'rgba(18,214,221,0.06)',
                     }}
                   >
-                    {project.tag}
+                    {activeProject.tag}
                   </span>
                   <h3 className="font-display text-3xl font-black text-white tracking-tight mt-3 leading-tight">
-                    {project.name}
+                    {activeProject.name}
                   </h3>
                   <p className="text-xs font-mono uppercase tracking-widest text-[color:var(--text-secondary)] mt-1.5">
-                    {project.subtitle}
+                    {activeProject.subtitle}
                   </p>
                 </div>
 
@@ -249,11 +265,11 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                 <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl border border-[color:var(--border-glass)] bg-white/[0.02] text-[11px] font-mono text-[color:var(--text-secondary)] leading-relaxed">
                   <div>
                     <span className="block text-[9px] uppercase tracking-wider opacity-40 mb-0.5">Timeline</span>
-                    <span className="text-white font-bold">{project.period}</span>
+                    <span className="text-white font-bold">{activeProject.period}</span>
                   </div>
                   <div>
                     <span className="block text-[9px] uppercase tracking-wider opacity-40 mb-0.5">Role</span>
-                    <span className="text-white font-bold">{project.role}</span>
+                    <span className="text-white font-bold">{activeProject.role}</span>
                   </div>
                 </div>
 
@@ -263,7 +279,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                     // Overview
                   </h4>
                   <p className="text-sm leading-relaxed text-[color:var(--text-secondary)] font-normal">
-                    {project.description}
+                    {activeProject.description}
                   </p>
                 </div>
 
@@ -273,7 +289,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                     // Key Implementation
                   </h4>
                   <ul className="flex flex-col gap-2.5">
-                    {project.highlights.map((h, i) => (
+                    {activeProject.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2.5 text-xs text-[color:var(--text-secondary)] leading-relaxed">
                         <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[color:var(--accent-cyan)]" />
                         <span>{h}</span>
@@ -288,7 +304,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                     // Tech Stack
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {project.stack.map((s) => (
+                    {activeProject.stack.map((s) => (
                       <span
                         key={s}
                         className="rounded-full border border-white/5 bg-white/[0.03] px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-[color:var(--text-secondary)] font-mono hover:border-white/10 hover:text-white transition-colors"
@@ -304,7 +320,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
               <div className="p-8 border-t border-[color:var(--border-glass)] shrink-0 bg-[color:var(--bg-deep)]">
                 <div className="flex gap-4">
                   <a
-                    href={`https://${project.github}`}
+                    href={`https://${activeProject.github}`}
                     target="_blank"
                     rel="noreferrer"
                     onClick={() => playClickSound()}
@@ -313,9 +329,9 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
                     <Github size={14} />
                     View Code
                   </a>
-                  {project.demoUrl && (
+                  {activeProject.demoUrl && (
                     <a
-                      href={project.demoUrl}
+                      href={activeProject.demoUrl}
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => playClickSound()}
@@ -332,6 +348,7 @@ export default function ProjectDemoModal({ project, isOpen, onClose }: ProjectDe
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

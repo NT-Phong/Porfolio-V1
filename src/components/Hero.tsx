@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -13,6 +14,7 @@ import AboutMeSection from './sections/AboutMeSection';
 import ProjectsSection from './sections/ProjectsSection';
 import CareerSection from './sections/CareerSection';
 import ContactSection from './sections/ContactSection';
+import StoryChapterHUD from './ui/StoryChapterHUD';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -51,7 +53,7 @@ export default function Hero() {
         .to('.gsap-social-icons > *', { y: 0, opacity: 1, stagger: 0.08, duration: 1.0, ease: 'power3.out' }, 0.8)
         .to('.gsap-side', { x: 0, opacity: 1, duration: 1.2, ease: 'power3.out' }, 1.0)
         .to('.scroll-down-indicator', { y: 0, opacity: 1, duration: 1.0, ease: 'power3.out' }, 1.2);
-    }, containerRef.current || undefined);
+    });
 
     return () => ctx.revert();
   }, [revealApp]);
@@ -81,22 +83,100 @@ export default function Hero() {
     }
 
     const ctx = gsap.context(() => {
+      // ── Background Glow Color Shifting (Storytelling Colors) ──
+      if (isDesktop) {
+        // Technical Profile (#about): Cyan-Teal
+        ScrollTrigger.create({
+          trigger: '#about',
+          start: 'top 60%',
+          end: 'bottom 60%',
+          onEnter: () => {
+            gsap.to('.bg-halo-glow', {
+              '--glow-color-1': 'rgba(27, 170, 160, 0.32)',
+              '--glow-color-2': 'rgba(27, 170, 160, 0.08)',
+              duration: 1.5,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          },
+          onLeaveBack: () => {
+            gsap.to('.bg-halo-glow', {
+              '--glow-color-1': 'rgba(59, 130, 246, 0.28)',
+              '--glow-color-2': 'rgba(18, 214, 221, 0.10)',
+              duration: 1.5,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+        });
+
+        // Career (#career): Terracotta Orange
+        ScrollTrigger.create({
+          trigger: '#career',
+          start: 'top 60%',
+          end: 'bottom 60%',
+          onEnter: () => {
+            gsap.to('.bg-halo-glow', {
+              '--glow-color-1': 'rgba(229, 84, 25, 0.32)',
+              '--glow-color-2': 'rgba(229, 84, 25, 0.08)',
+              duration: 1.5,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          },
+          onLeaveBack: () => {
+            gsap.to('.bg-halo-glow', {
+              '--glow-color-1': 'rgba(27, 170, 160, 0.32)',
+              '--glow-color-2': 'rgba(27, 170, 160, 0.08)',
+              duration: 1.5,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+        });
+
+        // Projects (#projects): Cyan-Teal
+        ScrollTrigger.create({
+          trigger: '#projects',
+          start: 'top 60%',
+          end: 'bottom 60%',
+          onEnter: () => {
+            gsap.to('.bg-halo-glow', {
+              '--glow-color-1': 'rgba(27, 170, 160, 0.32)',
+              '--glow-color-2': 'rgba(27, 170, 160, 0.08)',
+              duration: 1.5,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          },
+          onLeaveBack: () => {
+            gsap.to('.bg-halo-glow', {
+              '--glow-color-1': 'rgba(229, 84, 25, 0.32)',
+              '--glow-color-2': 'rgba(229, 84, 25, 0.08)',
+              duration: 1.5,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+        });
+      }
+
       // Scroll progress bar
       gsap.to('.scroll-progress-bar', {
         width: '100%', ease: 'none',
         scrollTrigger: { trigger: document.documentElement, start: 'top top', end: 'bottom bottom', scrub: 0.1 }
       });
 
-      // Fade out scroll indicator on scroll
+      // Fade out scroll indicator only when reaching the bottom of the page
       gsap.to('.scroll-down-indicator', {
         opacity: 0,
         y: 15,
-        ease: 'none',
+        ease: 'power1.out',
         scrollTrigger: {
-          trigger: document.documentElement,
-          start: 'top top',
-          end: '+=150',
-          scrub: true
+          trigger: containerRef.current || undefined,
+          start: 'bottom-250 bottom', // Starts fading when we are 250px away from the bottom of the page
+          end: 'bottom bottom',       // Fully hidden at the bottom
+          scrub: 0.5
         }
       });
 
@@ -130,6 +210,42 @@ export default function Hero() {
           }
         });
       });
+
+      // ── Cinematic Camera-Focus Transitions between Sections ──
+      if (isDesktop) {
+        const sectionsToFocus = ['#about', '#about-me', '#career', '#projects', '#contact'];
+        sectionsToFocus.forEach((secId) => {
+          const sec = document.querySelector(secId);
+          if (!sec) return;
+          const inner = sec.querySelector(':scope > div');
+          if (!inner) return;
+
+          // Set initial transition state (subtle scaled down, soft blur, invisible)
+          gsap.set(inner, { scale: 0.99, filter: 'blur(2px)', opacity: 0 });
+
+          // Animates lens focus and scale in sync with scroll progress
+          gsap.to(inner, {
+            scale: 1,
+            filter: 'blur(0px)',
+            opacity: 1,
+            ease: 'power1.out',
+            scrollTrigger: {
+              trigger: sec,
+              start: 'top 95%', // Starts immediately when entering screen
+              end: 'top 75%',   // Finishes early so it is sharp when reading
+              scrub: 0.8, // Soft follow momentum
+              onLeave: () => {
+                // Clear hardware-intensive props once section is fully in view to preserve performance
+                gsap.set(inner, { clearProps: 'filter,scale' });
+              },
+              onEnterBack: () => {
+                // Re-apply states if user scrolls back up so it can scrub blur/scale again
+                gsap.set(inner, { scale: 1, filter: 'blur(0px)', opacity: 1 });
+              }
+            }
+          });
+        });
+      }
 
       // ── Section 2 (About / My Stack) ──
       if (isDesktop) {
@@ -227,7 +343,7 @@ export default function Hero() {
         gsap.from('#contact [data-reveal-certifications]', { x: -40, opacity: 0, ease: 'power3.out', scrollTrigger: { trigger: '#contact', start: 'top 75%' } });
         gsap.from('#contact [data-reveal-contact]', { x: 40, opacity: 0, ease: 'power3.out', scrollTrigger: { trigger: '#contact', start: 'top 70%' } });
       }
-    }, containerRef.current || undefined);
+    });
 
     return () => {
       ctx.revert();
@@ -237,32 +353,60 @@ export default function Hero() {
     };
   }, []);
 
+  const isClient = typeof document !== 'undefined';
+
   return (
-    <div ref={containerRef} className="hero-shell main-scroll-container relative w-full bg-bg-deep">
+    <div ref={containerRef} className="hero-shell main-scroll-container relative w-full">
       {/* ── Fixed Scroll Progress Bar ── */}
-      <div className="scroll-progress-bar" />
+      {isClient && createPortal(
+        <div className="scroll-progress-bar" />,
+        document.body
+      )}
 
       {/* ── Sticky 3D Canvas ── */}
-      <div className="fixed inset-0 z-[10] h-screen w-screen pointer-events-none canvas-3d-container">
-        <div className="h-full w-full canvas-3d-inner">
-          <SplineHeroScene />
-        </div>
-      </div>
+      {isClient && createPortal(
+        <div className="fixed inset-0 z-[2] h-screen w-screen pointer-events-none canvas-3d-container">
+          <div className="h-full w-full canvas-3d-inner">
+            <SplineHeroScene />
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* ── Background Halo Glow (behind 3D model) ── */}
-      <div className="fixed inset-0 z-[9] pointer-events-none overflow-hidden flex items-center justify-center">
-        <div className="bg-halo-glow w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.18)_0%,rgba(242,92,5,0.08)_45%,rgba(5,7,12,0)_75%)] blur-[160px]" />
-      </div>
+      {isClient && createPortal(
+        <div className="fixed inset-0 z-[1] pointer-events-none overflow-hidden flex items-center justify-center">
+          <div 
+            className="bg-halo-glow w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] rounded-full blur-[160px]"
+            style={{
+              ['--glow-color-1' as any]: 'rgba(59, 130, 246, 0.28)',
+              ['--glow-color-2' as any]: 'rgba(18, 214, 221, 0.10)',
+              background: 'radial-gradient(circle, var(--glow-color-1) 0%, var(--glow-color-2) 50%, transparent 100%)',
+              mixBlendMode: 'screen' as any
+            }}
+          />
+        </div>,
+        document.body
+      )}
 
       {/* ── Scroll Down Indicator ── */}
-      <div className="scroll-down-indicator fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none">
-        <div className="scroll-indicator-mouse">
-          <div className="scroll-indicator-wheel" />
-        </div>
-        <span className="text-[9px] font-mono font-bold tracking-[0.25em] text-[color:var(--text-secondary)] opacity-40 uppercase">
-          Scroll Down
-        </span>
-      </div>
+      {isClient && createPortal(
+        <div className="scroll-down-indicator fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none">
+          <div className="scroll-indicator-mouse">
+            <div className="scroll-indicator-wheel" />
+          </div>
+          <span className="text-[9px] font-mono font-bold tracking-[0.25em] text-[color:var(--text-secondary)] opacity-65 uppercase">
+            Scroll Down
+          </span>
+        </div>,
+        document.body
+      )}
+
+      {/* ── Story Chapter HUD (Side Navigation Dock) ── */}
+      {isClient && createPortal(
+        <StoryChapterHUD />,
+        document.body
+      )}
 
       {/* Modular Section Rendering */}
       <HeroIntroSection />

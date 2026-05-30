@@ -68,21 +68,31 @@ export default function AboutMeSection() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} id="about-me" className="hero-section-panel about-me-section relative z-20 flex min-h-[100dvh] w-full items-center justify-center px-6 py-24 md:px-24 overflow-hidden bg-bg-deep">
+    <section ref={sectionRef} id="about-me" className="hero-section-panel about-me-section relative z-20 flex min-h-[100dvh] w-full items-center justify-center px-6 py-24 md:px-24 overflow-hidden">
       {/* Hiệu ứng màu nền nhẹ cho phần này */}
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_20%_40%,rgba(18,214,221,0.03)_0%,transparent_60%)] pointer-events-none" />
 
-      {/* Quả Cầu Phát Sáng Thủy Tinh (Cyan glow để đồng bộ) */}
+      {/* Quả Cầu Phát Sáng Thủy Tinh (Đã tách phần Hào quang cực mịn phía sau và quả cầu phía trước) */}
       <div 
         ref={orbRef}
-        className="absolute top-24 right-[10%] w-16 h-16 rounded-full pointer-events-none z-10 hidden md:block"
-        style={{
-          background: 'radial-gradient(circle at center, rgba(18, 214, 221, 0.75) 0%, rgba(18, 214, 221, 0.25) 50%, transparent 100%)',
-          boxShadow: '0 0 40px rgba(18, 214, 221, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2)',
-          backdropFilter: 'blur(2px)',
-          border: '1px solid rgba(255, 255, 255, 0.08)'
-        }}
-      />
+        className="absolute top-24 right-[10%] w-16 h-16 pointer-events-none z-10 hidden md:block"
+      >
+        {/* Vầng hào quang mịn tỏa rộng phía sau */}
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full pointer-events-none blur-[48px] opacity-60 mix-blend-screen"
+          style={{
+            background: 'radial-gradient(circle, rgba(18, 214, 221, 0.6) 0%, rgba(18, 214, 221, 0.15) 45%, transparent 75%)',
+          }}
+        />
+        {/* Quả cầu thủy tinh vật lý phía trước */}
+        <div 
+          className="absolute inset-0 rounded-full border border-white/10 backdrop-blur-sm"
+          style={{
+            background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18) 0%, rgba(18, 214, 221, 0.25) 55%, rgba(5, 7, 12, 0.5) 100%)',
+            boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 8px 16px rgba(0, 0, 0, 0.4)',
+          }}
+        />
+      </div>
 
       <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-16 items-center justify-between relative z-10">
         

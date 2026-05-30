@@ -139,25 +139,25 @@ export default function DownloadResumeButton() {
       {/* Liquid Glass Refraction Glow Behind Core (Constantly pulses to attract attention, intensifies on hover) */}
       <div 
         ref={glowRef}
-        className="absolute inset-0 rounded-full bg-gradient-to-tr from-[rgba(255,90,0,0.55)] via-[rgba(255,122,26,0.25)] to-transparent opacity-[0.65] blur-xl pointer-events-none z-0 animate-[pulse_2.8s_ease-in-out_infinite] group-hover:animate-none group-hover:blur-lg"
+        className="absolute inset-0 rounded-full bg-gradient-to-tr from-[rgba(var(--accent-orange-rgb),0.55)] via-[rgba(var(--accent-orange-rgb),0.25)] to-transparent opacity-[0.65] blur-xl pointer-events-none z-0 animate-[pulse_2.8s_ease-in-out_infinite] group-hover:animate-none group-hover:blur-lg"
       />
 
       {/* Double Bezel Inner Core (Machined hardware casing with warm amber-tint base) */}
       <div 
         ref={innerCoreRef}
-        className="relative z-10 flex items-center justify-center gap-4 pl-5 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-[#0d161a]/95 via-[#071014]/97 to-[#020406]/98 border border-white/[0.05] group-hover:from-[#14232a]/95 group-hover:via-[#0c1b22]/95 group-hover:to-[#04090d]/98 transition-all duration-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]"
+        className="relative z-10 flex items-center justify-center gap-4 pl-5 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-[var(--bg-surface)]/95 via-[var(--bg-deep)]/97 to-[var(--bg-deep)]/98 border border-white/[0.05] group-hover:from-[var(--bg-surface-hover)]/95 group-hover:via-[var(--bg-surface)]/95 group-hover:to-[var(--bg-deep)]/98 transition-all duration-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]"
       >
         {/* Cybernetic Live Status Indicator - Vibrant Orange Pulsing Beacon */}
         <div className="relative flex h-2.5 w-2.5 items-center justify-center">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-orange/60 opacity-80"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-orange shadow-[0_0_12px_#ff5a00,0_0_4px_#ff5a00]"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-orange shadow-[0_0_12px_var(--accent-orange),0_0_4px_var(--accent-orange)]"></span>
         </div>
 
         {/* Technical Micro-Badge Typography & Orange Metadata Info */}
         <span className="font-mono tracking-[0.22em] text-[9px] font-bold text-text-primary/75 group-hover:text-text-primary transition-colors duration-300 flex items-center gap-2.5">
           <span>CV_PORTFOLIO.PDF</span>
           <span className="text-text-muted/30 font-normal">|</span>
-          <span className="px-2 py-0.5 rounded-full text-[8.5px] font-bold bg-accent-orange/15 border border-accent-orange/25 text-accent-orange tracking-wider drop-shadow-[0_0_6px_rgba(255,90,0,0.35)]">
+          <span className="px-2 py-0.5 rounded-full text-[8.5px] font-bold bg-accent-orange/15 border border-accent-orange/25 text-accent-orange tracking-wider drop-shadow-[0_0_6px_rgba(var(--accent-orange-rgb),0.35)]">
             118KB
           </span>
         </span>
@@ -165,7 +165,7 @@ export default function DownloadResumeButton() {
         {/* Trailing Icon (Button-in-Button Island with solid glowing Orange highlight) */}
         <div 
           ref={iconWrapperRef}
-          className="w-8 h-8 rounded-full bg-accent-orange border border-accent-orange/30 text-white shadow-[0_0_12px_rgba(255,90,0,0.45)] group-hover:bg-accent-orange-hover group-hover:shadow-[0_0_20px_rgba(255,90,0,0.7),_inset_0_1px_1px_rgba(255,255,255,0.4)] flex items-center justify-center relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-10"
+          className="w-8 h-8 rounded-full bg-accent-orange border border-accent-orange/30 text-white shadow-[0_0_12px_rgba(var(--accent-orange-rgb),0.45)] group-hover:bg-accent-orange-hover group-hover:shadow-[0_0_20px_rgba(var(--accent-orange-rgb),0.7),_inset_0_1px_1px_rgba(255,255,255,0.4)] flex items-center justify-center relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-10"
         >
           {/* Mechanical Arrow-Reload Reveal Animation */}
           <div className="relative overflow-hidden w-3.5 h-3.5 flex flex-col items-center justify-center">

@@ -27,18 +27,10 @@ export const EDUCATION = {
 } as const;
 
 export const SKILLS = {
-  languages: ['C#', 'Java', 'JavaScript', 'Python', 'C'],
+  backend: ['C#', 'ASP.NET Core', 'Node.js / Express.js', 'Python', 'Java', 'Spring Boot'],
+  frontend: ['ReactJS', 'JavaScript', 'TypeScript', 'Tailwind CSS', 'Bootstrap'],
   databases: ['SQL Server', 'MySQL', 'MongoDB', 'SQLite'],
-  frameworks: [
-    'ASP.NET Core',
-    'ReactJS',
-    'Node.js / Express.js',
-    'Spring Boot',
-    'Django / Flask',
-    'Bootstrap',
-  ],
-  tools: ['Git', 'GitHub', 'Agile / Scrum', 'AWS (EC2, S3)', 'Cypress (E2E)'],
-  soft: ['Teamwork', 'Problem-Solving', 'SOLID Principles', 'Clean Architecture'],
+  tools: ['Git', 'GitHub', 'AWS (EC2, S3)', 'Cypress (E2E)', 'Agile / Scrum'],
 } as const;
 
 export const PROJECTS = [

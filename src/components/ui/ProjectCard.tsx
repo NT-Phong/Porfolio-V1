@@ -175,7 +175,7 @@ export default function ProjectCard({ project, isSectionActive, onExplore }: Pro
   return (
     <div
       ref={containerRef}
-      className={`group relative rounded-[2rem] overflow-hidden border border-white/5 bg-[color:var(--bg-surface)]/10 transition-all duration-500 cursor-pointer select-none ${layoutClasses}`}
+      className={`group relative p-1.5 rounded-[2.5rem] border border-white/[0.04] bg-white/[0.01] transition-all duration-500 cursor-pointer select-none overflow-hidden ${layoutClasses}`}
       style={{
         perspective: '1200px',
         transformStyle: 'preserve-3d',
@@ -184,16 +184,19 @@ export default function ProjectCard({ project, isSectionActive, onExplore }: Pro
       data-project-card
       onClick={onExplore}
     >
-      {/* Lớp viền sáng tinh tế xuất hiện khi hover */}
-      <div 
-        className="absolute inset-0 z-30 rounded-[2rem] border border-transparent transition-all duration-500 pointer-events-none group-hover:border-white/15"
-        style={{
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
-        }}
-      />
+      {/* Lớp lõi trong (Inner Core Bezel Enclosure) */}
+      <div className="relative w-full h-full rounded-[calc(2.5rem-0.375rem)] overflow-hidden border border-white/[0.05] bg-[color:var(--bg-surface)]/20 transition-all duration-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
+        
+        {/* Lớp viền sáng tinh tế xuất hiện khi hover */}
+        <div 
+          className="absolute inset-0 z-30 rounded-[calc(2.5rem-0.375rem)] border border-transparent transition-all duration-500 pointer-events-none group-hover:border-white/10"
+          style={{
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}
+        />
 
-      {/* ── Background Media: Blurred Backdrop Mirror + Foreground Contain ── */}
-      <div className="absolute inset-0 z-0 overflow-hidden rounded-[2rem]">
+        {/* ── Background Media: Blurred Backdrop Mirror + Foreground Contain ── */}
+        <div className="absolute inset-0 z-0 overflow-hidden rounded-[calc(2.5rem-0.375rem)]">
         {/* 1. Blurred Backdrop (Glow Ambient) - Tối ưu hoá chỉ dùng ảnh tĩnh */}
         <div className="absolute inset-0 filter blur-3xl opacity-35 scale-110 pointer-events-none z-0">
           <img
@@ -347,6 +350,7 @@ export default function ProjectCard({ project, isSectionActive, onExplore }: Pro
           </div>
 
         </div>
+      </div>
       </div>
     </div>
   );

@@ -1,65 +1,140 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { useLoading } from '../../hooks/useLoading';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 export default function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const { isLoading } = useLoading();
+  const smootherRef = useRef<ScrollSmoother | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+  const [isReady, setIsReady] = useState(false);
 
+  // Monitor screen size to toggle engines responsively
   useEffect(() => {
-    // Bỏ qua smooth scroll trên mobile để tối ưu hóa hiệu năng cuộn gốc
-    if (window.innerWidth <= 768) return;
-
-    const lenis = new Lenis({
-      duration: 1.6, // Tăng duration để cuộn mượt và đằm hơn
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo out
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 0.85, // Giảm nhẹ hệ số cuộn chuột để tốc độ cuộn chậm lại một chút
-    });
-
-    // Sync Lenis scroll updates with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
-    (window as any).lenis = lenis;
-    lenisRef.current = lenis;
-
-    // Ngay lập tức khóa cuộn nếu đang trong trạng thái tải trang
-    if (isLoading) {
-      lenis.stop();
-    }
-
-    const updateRaf = (time: number) => {
-      lenis.raf(time * 1000);
+    const handleResize = () => {
+      const desktop = window.innerWidth > 768;
+      setIsDesktop(desktop);
     };
 
-    gsap.ticker.add(updateRaf);
-    gsap.ticker.lagSmoothing(0);
-
+    window.addEventListener('resize', handleResize);
     return () => {
-      lenis.destroy();
-      (window as any).lenis = undefined;
-      lenisRef.current = null;
-      gsap.ticker.remove(updateRaf);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  // Theo dõi trạng thái loading để bật/tắt cuộn mượt tương ứng
+  // Initialize and destroy scroll smoothing engines based on platform
   useEffect(() => {
-    const lenis = lenisRef.current;
-    if (!lenis) return;
+    setIsReady(false); // Unmount children during engine switch to rebuild ScrollTriggers
 
-    if (isLoading) {
-      lenis.stop();
+    if (isDesktop) {
+      // 1. Desktop: GSAP ScrollSmoother
+      console.log('SmoothScroll: Initializing GSAP ScrollSmoother for Desktop');
+      
+      const smoother = ScrollSmoother.create({
+        wrapper: '#smooth-wrapper',
+        content: '#smooth-content',
+        smooth: 1.5, // Smooth scrolling factor
+        effects: true, // Enables data-speed and data-lag parallax effects
+        normalizeScroll: true, // Standardizes scroll across all touch and trackpad inputs
+      });
+
+      smootherRef.current = smoother;
+      (window as any).smoother = smoother;
+
+      if (isLoading) {
+        smoother.paused(true);
+      }
+
+      setIsReady(true); // Mount children AFTER ScrollSmoother is created
+
+      return () => {
+        console.log('SmoothScroll: Destroying GSAP ScrollSmoother');
+        smoother.kill();
+        smootherRef.current = null;
+        (window as any).smoother = undefined;
+      };
     } else {
-      lenis.start();
-    }
-  }, [isLoading]);
+      // 2. Mobile: Lenis
+      console.log('SmoothScroll: Initializing Lenis for Mobile');
+      
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo out
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1.0,
+      });
 
-  return <>{children}</>;
+      lenis.on('scroll', ScrollTrigger.update);
+      lenisRef.current = lenis;
+      (window as any).lenis = lenis;
+
+      if (isLoading) {
+        lenis.stop();
+      }
+
+      const updateRaf = (time: number) => {
+        lenis.raf(time * 1000);
+      };
+
+      gsap.ticker.add(updateRaf);
+      gsap.ticker.lagSmoothing(0);
+
+      setIsReady(true); // Mount children AFTER Lenis is created
+
+      return () => {
+        console.log('SmoothScroll: Destroying Lenis');
+        lenis.destroy();
+        lenisRef.current = null;
+        (window as any).lenis = undefined;
+        gsap.ticker.remove(updateRaf);
+      };
+    }
+  }, [isDesktop]);
+
+  // Sync loading state with scroll lock/unlock
+  useEffect(() => {
+    if (!isReady) return;
+
+    if (isDesktop) {
+      const smoother = smootherRef.current;
+      if (!smoother) return;
+
+      if (isLoading) {
+        smoother.paused(true);
+      } else {
+        smoother.paused(false);
+        // Delay ScrollTrigger refresh slightly to allow loading screen exit animation to complete
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 400);
+      }
+    } else {
+      const lenis = lenisRef.current;
+      if (!lenis) return;
+
+      if (isLoading) {
+        lenis.stop();
+      } else {
+        lenis.start();
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 400);
+      }
+    }
+  }, [isLoading, isReady, isDesktop]);
+
+  return (
+    <div id="smooth-wrapper" style={{ position: 'relative', zIndex: 10 }}>
+      <div id="smooth-content">
+        {isReady && children}
+      </div>
+    </div>
+  );
 }

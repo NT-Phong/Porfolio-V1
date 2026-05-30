@@ -141,7 +141,7 @@ function InteractiveBasketball() {
         <sphereGeometry args={[0.9, 128, 128]} />
         <meshPhysicalMaterial
           ref={leatherMaterialRef}
-          color="#ff7a1a"
+          color="#E55419"
           roughness={0.98}
           metalness={0.0}
           normalMap={normalMap}
@@ -150,7 +150,7 @@ function InteractiveBasketball() {
           reflectivity={0.1}
           sheen={0.8}
           sheenRoughness={1.0}
-          sheenColor="#ff9a4d"
+          sheenColor="#F26C31"
         />
         <mesh scale={[1.002, 1.002, 1.002]}>
           <sphereGeometry args={[0.9, 64, 64]} />
@@ -188,10 +188,10 @@ export default function BasketballScene() {
         <ambientLight intensity={0.1} />
         {/* Key Light - Warm */}
         <spotLight position={[5, 10, 10]} angle={0.3} penumbra={1} intensity={1500} color="#fff0e0" castShadow />
-        {/* Rim Light - Cool Cyan */}
-        <spotLight position={[-10, 8, -10]} angle={0.2} penumbra={0.1} intensity={3000} color="#12d6dd" />
-        {/* Bottom Fill - Orange */}
-        <pointLight position={[0, -8, 2]} intensity={200} color="#ff7a1a" />
+        {/* Rim Light - Cool Cyan (Calibrated to Mineral Teal) */}
+        <spotLight position={[-10, 8, -10]} angle={0.2} penumbra={0.1} intensity={3000} color="#1BAAA0" />
+        {/* Bottom Fill - Orange (Calibrated to Terracotta Orange) */}
+        <pointLight position={[0, -8, 2]} intensity={200} color="#E55419" />
 
         <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.1}>
           <InteractiveBasketball />
